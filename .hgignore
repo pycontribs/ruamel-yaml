@@ -14,5 +14,3 @@ try_*
 _doc/*.pdf
 _doc/*.rst
 *.py_alt
-
-ziglib

@@ -30,7 +30,7 @@ from ruamel.yaml.constructor import (
     Constructor,
     RoundTripConstructor,
 )
-from ruamel.yaml.loader import Loader as UnsafeLoader
+from ruamel.yaml.loader import Loader as UnsafeLoader  # NOQA
 from ruamel.yaml.comments import CommentedMap, CommentedSeq, C_PRE
 
 if False:  # MYPY
@@ -989,6 +989,16 @@ def warn_deprecation(fun, method, arg=''):
     )
 
 
+def error_deprecation(fun, method, arg=''):
+    # type: (Any, Any, str) -> None
+    warnings.warn(
+        f'\n{fun} has been removed, use\n\n  yaml=YAML({arg})\n  yaml.{method}(...)\n\ninstead',  # NOQA
+        DeprecationWarning,
+        stacklevel=3,
+    )
+    sys.exit(1)
+
+
 ########################################################################################
 
 
@@ -997,13 +1007,7 @@ def scan(stream, Loader=Loader):
     """
     Scan a YAML stream and produce scanning tokens.
     """
-    warn_deprecation('scan', 'scan', arg="typ='unsafe', pure=True")
-    loader = Loader(stream)
-    try:
-        while loader.scanner.check_token():
-            yield loader.scanner.get_token()
-    finally:
-        loader._parser.dispose()
+    error_deprecation('scan', 'scan', arg="typ='unsafe', pure=True")
 
 
 def parse(stream, Loader=Loader):
@@ -1011,13 +1015,7 @@ def parse(stream, Loader=Loader):
     """
     Parse a YAML stream and produce parsing events.
     """
-    warn_deprecation('parse', 'parse', arg="typ='unsafe', pure=True")
-    loader = Loader(stream)
-    try:
-        while loader._parser.check_event():
-            yield loader._parser.get_event()
-    finally:
-        loader._parser.dispose()
+    error_deprecation('parse', 'parse', arg="typ='unsafe', pure=True")
 
 
 def compose(stream, Loader=Loader):
@@ -1026,12 +1024,7 @@ def compose(stream, Loader=Loader):
     Parse the first YAML document in a stream
     and produce the corresponding representation tree.
     """
-    warn_deprecation('compose', 'compose', arg="typ='unsafe', pure=True")
-    loader = Loader(stream)
-    try:
-        return loader.get_single_node()
-    finally:
-        loader.dispose()
+    error_deprecation('compose', 'compose', arg="typ='unsafe', pure=True")
 
 
 def compose_all(stream, Loader=Loader):
@@ -1040,13 +1033,7 @@ def compose_all(stream, Loader=Loader):
     Parse all YAML documents in a stream
     and produce corresponding representation trees.
     """
-    warn_deprecation('compose', 'compose', arg="typ='unsafe', pure=True")
-    loader = Loader(stream)
-    try:
-        while loader.check_node():
-            yield loader._composer.get_node()
-    finally:
-        loader._parser.dispose()
+    error_deprecation('compose', 'compose', arg="typ='unsafe', pure=True")
 
 
 def load(stream, Loader=None, version=None, preserve_quotes=None):
@@ -1055,23 +1042,7 @@ def load(stream, Loader=None, version=None, preserve_quotes=None):
     Parse the first YAML document in a stream
     and produce the corresponding Python object.
     """
-    warn_deprecation('load', 'load', arg="typ='unsafe', pure=True")
-    if Loader is None:
-        warnings.warn(UnsafeLoaderWarning.text, UnsafeLoaderWarning, stacklevel=2)
-        Loader = UnsafeLoader
-    loader = Loader(stream, version, preserve_quotes=preserve_quotes)  # type: Any
-    try:
-        return loader._constructor.get_single_data()
-    finally:
-        loader._parser.dispose()
-        try:
-            loader._reader.reset_reader()
-        except AttributeError:
-            pass
-        try:
-            loader._scanner.reset_scanner()
-        except AttributeError:
-            pass
+    error_deprecation('load', 'load', arg="typ='unsafe', pure=True")
 
 
 def load_all(stream, Loader=None, version=None, preserve_quotes=None):
@@ -1080,24 +1051,7 @@ def load_all(stream, Loader=None, version=None, preserve_quotes=None):
     Parse all YAML documents in a stream
     and produce corresponding Python objects.
     """
-    warn_deprecation('load_all', 'load_all', arg="typ='unsafe', pure=True")
-    if Loader is None:
-        warnings.warn(UnsafeLoaderWarning.text, UnsafeLoaderWarning, stacklevel=2)
-        Loader = UnsafeLoader
-    loader = Loader(stream, version, preserve_quotes=preserve_quotes)  # type: Any
-    try:
-        while loader._constructor.check_data():
-            yield loader._constructor.get_data()
-    finally:
-        loader._parser.dispose()
-        try:
-            loader._reader.reset_reader()
-        except AttributeError:
-            pass
-        try:
-            loader._scanner.reset_scanner()
-        except AttributeError:
-            pass
+    error_deprecation('load_all', 'load_all', arg="typ='unsafe', pure=True")
 
 
 def safe_load(stream, version=None):
@@ -1107,8 +1061,7 @@ def safe_load(stream, version=None):
     and produce the corresponding Python object.
     Resolve only basic YAML tags.
     """
-    warn_deprecation('safe_load', 'load', arg="typ='safe', pure=True")
-    return load(stream, SafeLoader, version)
+    error_deprecation('safe_load', 'load', arg="typ='safe', pure=True")
 
 
 def safe_load_all(stream, version=None):
@@ -1118,8 +1071,7 @@ def safe_load_all(stream, version=None):
     and produce corresponding Python objects.
     Resolve only basic YAML tags.
     """
-    warn_deprecation('safe_load_all', 'load_all', arg="typ='safe', pure=True")
-    return load_all(stream, SafeLoader, version)
+    error_deprecation('safe_load_all', 'load_all', arg="typ='safe', pure=True")
 
 
 def round_trip_load(stream, version=None, preserve_quotes=None):
@@ -1129,8 +1081,7 @@ def round_trip_load(stream, version=None, preserve_quotes=None):
     and produce the corresponding Python object.
     Resolve only basic YAML tags.
     """
-    warn_deprecation('round_trip_load_all', 'load')
-    return load(stream, RoundTripLoader, version, preserve_quotes=preserve_quotes)
+    error_deprecation('round_trip_load_all', 'load')
 
 
 def round_trip_load_all(stream, version=None, preserve_quotes=None):
@@ -1140,8 +1091,7 @@ def round_trip_load_all(stream, version=None, preserve_quotes=None):
     and produce corresponding Python objects.
     Resolve only basic YAML tags.
     """
-    warn_deprecation('round_trip_load_all', 'load_all')
-    return load_all(stream, RoundTripLoader, version, preserve_quotes=preserve_quotes)
+    error_deprecation('round_trip_load_all', 'load_all')
 
 
 def emit(
@@ -1159,30 +1109,7 @@ def emit(
     Emit YAML parsing events into a stream.
     If stream is None, return the produced string instead.
     """
-    warn_deprecation('emit', 'emit', arg="typ='safe', pure=True")
-    getvalue = None
-    if stream is None:
-        stream = StringIO()
-        getvalue = stream.getvalue
-    dumper = Dumper(
-        stream,
-        canonical=canonical,
-        indent=indent,
-        width=width,
-        allow_unicode=allow_unicode,
-        line_break=line_break,
-    )
-    try:
-        for event in events:
-            dumper.emit(event)
-    finally:
-        try:
-            dumper._emitter.dispose()
-        except AttributeError:
-            raise
-            dumper.dispose()  # cyaml
-    if getvalue is not None:
-        return getvalue()
+    error_deprecation('emit', 'emit', arg="typ='safe', pure=True")
 
 
 enc = None
@@ -1208,40 +1135,7 @@ def serialize_all(
     Serialize a sequence of representation trees into a YAML stream.
     If stream is None, return the produced string instead.
     """
-    warn_deprecation('serialize_all', 'serialize_all', arg="typ='safe', pure=True")
-    getvalue = None
-    if stream is None:
-        if encoding is None:
-            stream = StringIO()
-        else:
-            stream = BytesIO()
-        getvalue = stream.getvalue
-    dumper = Dumper(
-        stream,
-        canonical=canonical,
-        indent=indent,
-        width=width,
-        allow_unicode=allow_unicode,
-        line_break=line_break,
-        encoding=encoding,
-        version=version,
-        tags=tags,
-        explicit_start=explicit_start,
-        explicit_end=explicit_end,
-    )
-    try:
-        dumper._serializer.open()
-        for node in nodes:
-            dumper.serialize(node)
-        dumper._serializer.close()
-    finally:
-        try:
-            dumper._emitter.dispose()
-        except AttributeError:
-            raise
-            dumper.dispose()  # cyaml
-    if getvalue is not None:
-        return getvalue()
+    error_deprecation('serialize_all', 'serialize_all', arg="typ='safe', pure=True")
 
 
 def serialize(node, stream=None, Dumper=Dumper, **kwds):
@@ -1250,8 +1144,7 @@ def serialize(node, stream=None, Dumper=Dumper, **kwds):
     Serialize a representation tree into a YAML stream.
     If stream is None, return the produced string instead.
     """
-    warn_deprecation('serialize', 'serialize', arg="typ='safe', pure=True")
-    return serialize_all([node], stream, Dumper=Dumper, **kwds)
+    error_deprecation('serialize', 'serialize', arg="typ='safe', pure=True")
 
 
 def dump_all(
@@ -1279,52 +1172,7 @@ def dump_all(
     Serialize a sequence of Python objects into a YAML stream.
     If stream is None, return the produced string instead.
     """
-    warn_deprecation('dump_all', 'dump_all', arg="typ='unsafe', pure=True")
-    getvalue = None
-    if top_level_colon_align is True:
-        top_level_colon_align = max([len(str(x)) for x in documents[0]])
-    if stream is None:
-        if encoding is None:
-            stream = StringIO()
-        else:
-            stream = BytesIO()
-        getvalue = stream.getvalue
-    dumper = Dumper(
-        stream,
-        default_style=default_style,
-        default_flow_style=default_flow_style,
-        canonical=canonical,
-        indent=indent,
-        width=width,
-        allow_unicode=allow_unicode,
-        line_break=line_break,
-        encoding=encoding,
-        explicit_start=explicit_start,
-        explicit_end=explicit_end,
-        version=version,
-        tags=tags,
-        block_seq_indent=block_seq_indent,
-        top_level_colon_align=top_level_colon_align,
-        prefix_colon=prefix_colon,
-    )
-    try:
-        dumper._serializer.open()
-        for data in documents:
-            try:
-                dumper._representer.represent(data)
-            except AttributeError:
-                # nprint(dir(dumper._representer))
-                raise
-        dumper._serializer.close()
-    finally:
-        try:
-            dumper._emitter.dispose()
-        except AttributeError:
-            raise
-            dumper.dispose()  # cyaml
-    if getvalue is not None:
-        return getvalue()
-    return None
+    error_deprecation('dump_all', 'dump_all', arg="typ='unsafe', pure=True")
 
 
 def dump(
@@ -1353,36 +1201,7 @@ def dump(
     default_style ∈ None, '', '"', "'", '|', '>'
 
     """
-    warn_deprecation('dump', 'dump', arg="typ='unsafe', pure=True")
-    return dump_all(
-        [data],
-        stream,
-        Dumper=Dumper,
-        default_style=default_style,
-        default_flow_style=default_flow_style,
-        canonical=canonical,
-        indent=indent,
-        width=width,
-        allow_unicode=allow_unicode,
-        line_break=line_break,
-        encoding=encoding,
-        explicit_start=explicit_start,
-        explicit_end=explicit_end,
-        version=version,
-        tags=tags,
-        block_seq_indent=block_seq_indent,
-    )
-
-
-def safe_dump_all(documents, stream=None, **kwds):
-    # type: (Any, Optional[StreamType], Any) -> Optional[Any]
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    warn_deprecation('safe_dump_all', 'dump_all', arg="typ='safe', pure=True")
-    return dump_all(documents, stream, Dumper=SafeDumper, **kwds)
+    error_deprecation('dump', 'dump', arg="typ='unsafe', pure=True")
 
 
 def safe_dump(data, stream=None, **kwds):
@@ -1392,8 +1211,7 @@ def safe_dump(data, stream=None, **kwds):
     Produce only basic YAML tags.
     If stream is None, return the produced string instead.
     """
-    warn_deprecation('safe_dump', 'dump', arg="typ='safe', pure=True")
-    return dump_all([data], stream, Dumper=SafeDumper, **kwds)
+    error_deprecation('safe_dump', 'dump', arg="typ='safe', pure=True")
 
 
 def round_trip_dump(
@@ -1418,27 +1236,7 @@ def round_trip_dump(
 ):
     # type: (Any, Optional[StreamType], Any, Any, Any, Optional[bool], Optional[int], Optional[int], Optional[bool], Any, Any, Optional[bool], Optional[bool], Optional[VersionType], Any, Any, Any, Any) -> Optional[Any]   # NOQA
     allow_unicode = True if allow_unicode is None else allow_unicode
-    warn_deprecation('round_trip_dump', 'dump')
-    return dump_all(
-        [data],
-        stream,
-        Dumper=Dumper,
-        default_style=default_style,
-        default_flow_style=default_flow_style,
-        canonical=canonical,
-        indent=indent,
-        width=width,
-        allow_unicode=allow_unicode,
-        line_break=line_break,
-        encoding=encoding,
-        explicit_start=explicit_start,
-        explicit_end=explicit_end,
-        version=version,
-        tags=tags,
-        block_seq_indent=block_seq_indent,
-        top_level_colon_align=top_level_colon_align,
-        prefix_colon=prefix_colon,
-    )
+    error_deprecation('round_trip_dump', 'dump')
 
 
 # Loader/Dumper are no longer composites, to get to the associated
