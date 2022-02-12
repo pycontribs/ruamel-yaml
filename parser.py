@@ -80,7 +80,7 @@ from ruamel.yaml.events import *  # NOQA
 from ruamel.yaml.scanner import Scanner, RoundTripScanner, ScannerError  # NOQA
 from ruamel.yaml.scanner import BlankLineComment
 from ruamel.yaml.comments import C_PRE, C_POST, C_SPLIT_ON_FIRST_BLANK
-from ruamel.yaml.compat import _F, nprint, nprintf  # NOQA
+from ruamel.yaml.compat import nprint, nprintf  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Optional  # NOQA
@@ -220,10 +220,8 @@ class Parser:
                 raise ParserError(
                     None,
                     None,
-                    _F(
-                        "expected '<document start>', but found {pt!r}",
-                        pt=self.scanner.peek_token().id,
-                    ),
+                    "expected '<document start>', "
+                    f'but found {self.scanner.peek_token().id,!r}',
                     self.scanner.peek_token().start_mark,
                 )
             token = self.scanner.get_token()
@@ -233,8 +231,12 @@ class Parser:
             #    end_mark.line != self.scanner.peek_token().start_mark.line:
             #     self.loader.scalar_after_indicator = False
             event = DocumentStartEvent(
-                start_mark, end_mark, explicit=True, version=version, tags=tags,
-                comment=token.comment
+                start_mark,
+                end_mark,
+                explicit=True,
+                version=version,
+                tags=tags,
+                comment=token.comment,
             )  # type: Any
             self.states.append(self.parse_document_end)
             self.state = self.parse_document_content
@@ -302,10 +304,7 @@ class Parser:
                 handle, prefix = token.value
                 if handle in self.tag_handles:
                     raise ParserError(
-                        None,
-                        None,
-                        _F('duplicate tag handle {handle!r}', handle=handle),
-                        token.start_mark,
+                        None, None, f'duplicate tag handle {handle!r}', token.start_mark,
                     )
                 self.tag_handles[handle] = prefix
         if bool(self.tag_handles):
@@ -394,7 +393,7 @@ class Parser:
                     raise ParserError(
                         'while parsing a node',
                         start_mark,
-                        _F('found undefined tag handle {handle!r}', handle=handle),
+                        f'found undefined tag handle {handle!r}',
                         tag_mark,
                     )
                 tag = self.transform_tag(handle, suffix)
@@ -507,9 +506,9 @@ class Parser:
                 node = 'flow'
             token = self.scanner.peek_token()
             raise ParserError(
-                _F('while parsing a {node!s} node', node=node),
+                f'while parsing a {node!s} node',
                 start_mark,
-                _F('expected the node content, but found {token_id!r}', token_id=token.id),
+                f'expected the node content, but found {token.id!r}',
                 token.start_mark,
             )
         return event
@@ -541,7 +540,7 @@ class Parser:
             raise ParserError(
                 'while parsing a block collection',
                 self.marks[-1],
-                _F('expected <block end>, but found {token_id!r}', token_id=token.id),
+                f'expected <block end>, but found {token.id!r}',
                 token.start_mark,
             )
         token = self.scanner.get_token()  # BlockEndToken
@@ -612,7 +611,7 @@ class Parser:
             raise ParserError(
                 'while parsing a block mapping',
                 self.marks[-1],
-                _F('expected <block end>, but found {token_id!r}', token_id=token.id),
+                f'expected <block end>, but found {token.id!r}',
                 token.start_mark,
             )
         token = self.scanner.get_token()
@@ -679,7 +678,7 @@ class Parser:
                     raise ParserError(
                         'while parsing a flow sequence',
                         self.marks[-1],
-                        _F("expected ',' or ']', but got {token_id!r}", token_id=token.id),
+                        f"expected ',' or ']', but got {token.id!r}",
                         token.start_mark,
                     )
 
@@ -753,7 +752,7 @@ class Parser:
                     raise ParserError(
                         'while parsing a flow mapping',
                         self.marks[-1],
-                        _F("expected ',' or '}}', but got {token_id!r}", token_id=token.id),
+                        f"expected ',' or '}}', but got {token.id!r}",
                         token.start_mark,
                     )
             if self.scanner.check_token(KeyToken):

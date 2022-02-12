@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from ruamel.yaml.compat import _F, nprintf  # NOQA
+from ruamel.yaml.compat import nprintf  # NOQA
 
 if False:  # MYPY
     from typing import Text, Any, Dict, Optional, List  # NOQA
@@ -24,10 +24,10 @@ class Token:
         attributes = [key for key in self.__slots__ if not key.endswith('_mark')]
         attributes.sort()
         # arguments = ', '.join(
-        #  [_F('{key!s}={gattr!r})', key=key, gattr=getattr(self, key)) for key in attributes]
+        #  [f'{key!s}={getattr(self, key)!r})' for key in attributes]
         # )
         arguments = [
-            _F('{key!s}={gattr!r}', key=key, gattr=getattr(self, key)) for key in attributes
+            f'{key!s}={getattr(self, key)!r}' for key in attributes
         ]
         if SHOW_LINES:
             try:
@@ -149,7 +149,7 @@ class Token:
             # nprint('mco2:', self, target, target.comment, empty)
             return self
         if c[0] and tc[0] or c[1] and tc[1]:
-            raise NotImplementedError(_F('overlap in comment {c!r} {tc!r}', c=c, tc=tc))
+            raise NotImplementedError(f'overlap in comment {c!r} {tc!r}')
         if c[0]:
             tc[0] = c[0]
         if c[1]:
@@ -197,7 +197,7 @@ class Token:
         # if self and target have both pre, eol or post comments, something seems wrong
         for idx in range(3):
             if c[idx] is not None and tc[idx] is not None:
-                raise NotImplementedError(_F('overlap in comment {c!r} {tc!r}', c=c, tc=tc))
+                raise NotImplementedError(f'overlap in comment {c!r} {tc!r}')
         # move the comment parts
         for idx in range(3):
             if c[idx]:

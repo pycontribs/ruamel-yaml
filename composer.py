@@ -3,7 +3,7 @@
 import warnings
 
 from ruamel.yaml.error import MarkedYAMLError, ReusedAnchorWarning
-from ruamel.yaml.compat import _F, nprint, nprintf  # NOQA
+from ruamel.yaml.compat import nprint, nprintf  # NOQA
 
 from ruamel.yaml.events import (
     StreamStartEvent,
@@ -117,7 +117,7 @@ class Composer:
                 raise ComposerError(
                     None,
                     None,
-                    _F('found undefined alias {alias!r}', alias=alias),
+                    f'found undefined alias {alias!r}',
                     event.start_mark,
                 )
             return self.return_alias(self.anchors[alias])

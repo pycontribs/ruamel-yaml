@@ -3,7 +3,7 @@
 from ruamel.yaml.error import *  # NOQA
 from ruamel.yaml.nodes import *  # NOQA
 from ruamel.yaml.compat import ordereddict
-from ruamel.yaml.compat import _F, nprint, nprintf  # NOQA
+from ruamel.yaml.compat import nprint, nprintf  # NOQA
 from ruamel.yaml.scalarstring import (
     LiteralScalarString,
     FoldedScalarString,
@@ -351,7 +351,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_undefined(self, data):
         # type: (Any) -> None
-        raise RepresenterError(_F('cannot represent an object: {data!s}', data=data))
+        raise RepresenterError(f'cannot represent an object: {data!s}')
 
 
 SafeRepresenter.add_representer(type(None), SafeRepresenter.represent_none)
@@ -396,11 +396,11 @@ class Representer(SafeRepresenter):
         if data.imag == 0.0:
             data = repr(data.real)
         elif data.real == 0.0:
-            data = _F('{data_imag!r}j', data_imag=data.imag)
+            data = f'{data.imag!r}j'
         elif data.imag > 0:
-            data = _F('{data_real!r}+{data_imag!r}j', data_real=data.real, data_imag=data.imag)
+            data = f'{data.real!r}+{data.imag!r}j'
         else:
-            data = _F('{data_real!r}{data_imag!r}j', data_real=data.real, data_imag=data.imag)
+            data = f'{data.real!r}{data.imag!r}j'
         return self.represent_scalar('tag:yaml.org,2002:python/complex', data)
 
     def represent_tuple(self, data):
@@ -410,12 +410,10 @@ class Representer(SafeRepresenter):
     def represent_name(self, data):
         # type: (Any) -> Any
         try:
-            name = _F(
-                '{modname!s}.{qualname!s}', modname=data.__module__, qualname=data.__qualname__
-            )
+            name = f'{data.__module__!s}.{data.__qualname__!s}'
         except AttributeError:
             # ToDo: check if this can be reached in Py3
-            name = _F('{modname!s}.{name!s}', modname=data.__module__, name=data.__name__)
+            name = f'{data.__module__!s}.{data.__name__!s}'
         return self.represent_scalar('tag:yaml.org,2002:python/name:' + name, "")
 
     def represent_module(self, data):
@@ -448,7 +446,7 @@ class Representer(SafeRepresenter):
         elif hasattr(data, '__reduce__'):
             reduce = data.__reduce__()
         else:
-            raise RepresenterError(_F('cannot represent object: {data!r}', data=data))
+            raise RepresenterError(f'cannot represent object: {data!r}')
         reduce = (list(reduce) + [None] * 5)[:5]
         function, args, state, listitems, dictitems = reduce
         args = list(args)
@@ -467,14 +465,10 @@ class Representer(SafeRepresenter):
             tag = 'tag:yaml.org,2002:python/object/apply:'
             newobj = False
         try:
-            function_name = _F(
-                '{fun!s}.{qualname!s}', fun=function.__module__, qualname=function.__qualname__
-            )
+            function_name = f'{function.__module__!s}.{function.__qualname__!s}'
         except AttributeError:
             # ToDo: check if this can be reached in Py3
-            function_name = _F(
-                '{fun!s}.{name!s}', fun=function.__module__, name=function.__name__
-            )
+            function_name = f'{function.__module__!s}.{function.__name__!s}'
         if not args and not listitems and not dictitems and isinstance(state, dict) and newobj:
             return self.represent_mapping(
                 'tag:yaml.org,2002:python/object:' + function_name, state

@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from ruamel.yaml.compat import _F
-
 # Abstract classes.
 
 if False:  # MYPY
@@ -39,7 +37,7 @@ class Event:
             for key in ['anchor', 'tag', 'implicit', 'flow_style', 'style']:
                 v = getattr(self, key, None)
                 if v is not None:
-                    arguments.append(_F('{key!s}={v!r}', key=key, v=v))
+                    arguments.append(f'{key!s}={v!r}')
             if self.comment not in [None, CommentCheck]:
                 arguments.append('comment={!r}'.format(self.comment))
             if SHOW_LINES:
@@ -59,15 +57,11 @@ class Event:
                 if hasattr(self, key)
             ]
             arguments = ', '.join(
-                [_F('{k!s}={attr!r}', k=key, attr=getattr(self, key)) for key in attributes]
+                [f'{key!s}={getattr(self, key)!r}' for key in attributes]
             )
             if self.comment not in [None, CommentCheck]:
                 arguments += ', comment={!r}'.format(self.comment)
-        return _F(
-            '{self_class_name!s}({arguments!s})',
-            self_class_name=self.__class__.__name__,
-            arguments=arguments,
-        )
+        return f'{self.__class__.__name__!s}({arguments!s})'
 
 
 class NodeEvent(Event):

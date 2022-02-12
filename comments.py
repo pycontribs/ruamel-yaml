@@ -11,7 +11,7 @@ import copy
 
 
 from ruamel.yaml.compat import ordereddict
-from ruamel.yaml.compat import MutableSliceableSequence, _F, nprintf  # NOQA
+from ruamel.yaml.compat import MutableSliceableSequence, nprintf  # NOQA
 from ruamel.yaml.scalarstring import ScalarString
 from ruamel.yaml.anchor import Anchor
 
@@ -294,7 +294,7 @@ class LineCol:
 
     def __repr__(self):
         # type: () -> str
-        return _F('LineCol({line}, {col})', line=self.line, col=self.col)  # type: ignore
+        return f'LineCol({self.line}, {self.col})'
 
 
 class Tag:

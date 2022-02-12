@@ -2,8 +2,6 @@
 
 import sys
 
-from ruamel.yaml.compat import _F
-
 if False:  # MYPY
     from typing import Dict, Any, Text  # NOQA
 
@@ -36,12 +34,7 @@ class Node:
         #     else:
         #         value = repr(value)
         value = repr(value)
-        return _F(
-            '{class_name!s}(tag={self_tag!r}, value={value!s})',
-            class_name=self.__class__.__name__,
-            self_tag=self.tag,
-            value=value,
-        )
+        return f'{self.__class__.__name__!s}(tag={self.tag!r}, value={value!s})'
 
     def dump(self, indent=0):
         # type: (int) -> None

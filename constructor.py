@@ -13,7 +13,7 @@ from ruamel.yaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
                                MantissaNoDotYAML1_1Warning)
 from ruamel.yaml.nodes import *                               # NOQA
 from ruamel.yaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruamel.yaml.compat import (_F, builtins_module, # NOQA
+from ruamel.yaml.compat import (builtins_module, # NOQA
                                 nprint, nprintf, version_tnf)
 from ruamel.yaml.compat import ordereddict
 
@@ -203,10 +203,7 @@ class BaseConstructor:
         # type: (Any) -> Any
         if not isinstance(node, ScalarNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a scalar node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a scalar node, but found {node.id!s}', node.start_mark,
             )
         return node.value
 
@@ -219,7 +216,7 @@ class BaseConstructor:
             raise ConstructorError(
                 None,
                 None,
-                _F('expected a sequence node, but found {node_id!s}', node_id=node.id),
+                f'expected a sequence node, but found {node.id!s}',
                 node.start_mark,
             )
         return [self.construct_object(child, deep=deep) for child in node.value]
@@ -231,10 +228,7 @@ class BaseConstructor:
         """
         if not isinstance(node, MappingNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a mapping node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a mapping node, but found {node.id!s}', node.start_mark,
             )
         total_mapping = self.yaml_base_dict_type()
         if getattr(node, 'merge', None) is not None:
@@ -322,10 +316,7 @@ class BaseConstructor:
         # type: (Any, bool) -> Any
         if not isinstance(node, MappingNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a mapping node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a mapping node, but found {node.id!s}', node.start_mark,
             )
         pairs = []
         for key_node, value_node in node.value:
@@ -404,10 +395,7 @@ class SafeConstructor(BaseConstructor):
                             raise ConstructorError(
                                 'while constructing a mapping',
                                 node.start_mark,
-                                _F(
-                                    'expected a mapping for merging, but found {subnode_id!s}',
-                                    subnode_id=subnode.id,
-                                ),
+                                f'expected a mapping for merging, but found {subnode.id!s}',
                                 subnode.start_mark,
                             )
                         self.flatten_mapping(subnode)
@@ -419,11 +407,8 @@ class SafeConstructor(BaseConstructor):
                     raise ConstructorError(
                         'while constructing a mapping',
                         node.start_mark,
-                        _F(
-                            'expected a mapping or list of mappings for merging, '
-                            'but found {value_node_id!s}',
-                            value_node_id=value_node.id,
-                        ),
+                        'expected a mapping or list of mappings for merging, '
+                        f'but found {value_node.id!s}',
                         value_node.start_mark,
                     )
             elif key_node.tag == 'tag:yaml.org,2002:value':
@@ -540,17 +525,14 @@ class SafeConstructor(BaseConstructor):
             raise ConstructorError(
                 None,
                 None,
-                _F('failed to convert base64 data into ascii: {exc!s}', exc=exc),
+                f'failed to convert base64 data into ascii: {exc!s}',
                 node.start_mark,
             )
         try:
             return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
-                None,
-                None,
-                _F('failed to decode base64 data: {exc!s}', exc=exc),
-                node.start_mark,
+                None, None, f'failed to decode base64 data: {exc!s}', node.start_mark,
             )
 
     timestamp_regexp = timestamp_regexp  # moved to util 0.17.17
@@ -581,7 +563,7 @@ class SafeConstructor(BaseConstructor):
             raise ConstructorError(
                 'while constructing an ordered map',
                 node.start_mark,
-                _F('expected a sequence, but found {node_id!s}', node_id=node.id),
+                f'expected a sequence, but found {node.id!s}',
                 node.start_mark,
             )
         for subnode in node.value:
@@ -589,20 +571,14 @@ class SafeConstructor(BaseConstructor):
                 raise ConstructorError(
                     'while constructing an ordered map',
                     node.start_mark,
-                    _F(
-                        'expected a mapping of length 1, but found {subnode_id!s}',
-                        subnode_id=subnode.id,
-                    ),
+                    f'expected a mapping of length 1, but found {subnode.id!s}',
                     subnode.start_mark,
                 )
             if len(subnode.value) != 1:
                 raise ConstructorError(
                     'while constructing an ordered map',
                     node.start_mark,
-                    _F(
-                        'expected a single mapping item, but found {len_subnode_val:d} items',
-                        len_subnode_val=len(subnode.value),
-                    ),
+                    f'expected a single mapping item, but found {len(subnode.value):d} items',
                     subnode.start_mark,
                 )
             key_node, value_node = subnode.value[0]
@@ -620,7 +596,7 @@ class SafeConstructor(BaseConstructor):
             raise ConstructorError(
                 'while constructing pairs',
                 node.start_mark,
-                _F('expected a sequence, but found {node_id!s}', node_id=node.id),
+                f'expected a sequence, but found {node.id!s}',
                 node.start_mark,
             )
         for subnode in node.value:
@@ -628,20 +604,14 @@ class SafeConstructor(BaseConstructor):
                 raise ConstructorError(
                     'while constructing pairs',
                     node.start_mark,
-                    _F(
-                        'expected a mapping of length 1, but found {subnode_id!s}',
-                        subnode_id=subnode.id,
-                    ),
+                    f'expected a mapping of length 1, but found {subnode.id!s}',
                     subnode.start_mark,
                 )
             if len(subnode.value) != 1:
                 raise ConstructorError(
                     'while constructing pairs',
                     node.start_mark,
-                    _F(
-                        'expected a single mapping item, but found {len_subnode_val:d} items',
-                        len_subnode_val=len(subnode.value),
-                    ),
+                    f'expected a single mapping item, but found {len(subnode.value):d} items',
                     subnode.start_mark,
                 )
             key_node, value_node = subnode.value[0]
@@ -690,9 +660,7 @@ class SafeConstructor(BaseConstructor):
         raise ConstructorError(
             None,
             None,
-            _F(
-                'could not determine a constructor for the tag {node_tag!r}', node_tag=node.tag
-            ),
+            f'could not determine a constructor for the tag {node.tag!r}',
             node.start_mark,
         )
 
@@ -749,17 +717,14 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 None,
                 None,
-                _F('failed to convert base64 data into ascii: {exc!s}', exc=exc),
+                f'failed to convert base64 data into ascii: {exc!s}',
                 node.start_mark,
             )
         try:
             return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
-                None,
-                None,
-                _F('failed to decode base64 data: {exc!s}', exc=exc),
-                node.start_mark,
+                None, None, f'failed to decode base64 data: {exc!s}', node.start_mark,
             )
 
     def construct_python_long(self, node):
@@ -790,7 +755,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 mark,
-                _F('cannot find module {name!r} ({exc!s})', name=name, exc=exc),
+                f'cannot find module {name!r} ({exc!s})',
                 mark,
             )
         return sys.modules[name]
@@ -826,11 +791,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python object',
                 mark,
-                _F(
-                    'cannot find module {module_name!r} ({exc!s})',
-                    module_name=module_name,
-                    exc=exc,
-                ),
+                f'cannot find module {module_name!r} ({exc!s})',
                 mark,
             )
         module = sys.modules[module_name]
@@ -842,11 +803,7 @@ class Constructor(SafeConstructor):
                 raise ConstructorError(
                     'while constructing a Python object',
                     mark,
-                    _F(
-                        'cannot find {object_name!r} in the module {module_name!r}',
-                        object_name=object_name,
-                        module_name=module.__name__,
-                    ),
+                    f'cannot find {object_name!r} in the module {module.__name__!r}',
                     mark,
                 )
             obj = getattr(obj, lobject_name.pop(0))
@@ -859,7 +816,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python name',
                 node.start_mark,
-                _F('expected the empty value, but found {value!r}', value=value),
+                f'expected the empty value, but found {value!r}',
                 node.start_mark,
             )
         return self.find_python_name(suffix, node.start_mark)
@@ -871,7 +828,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 node.start_mark,
-                _F('expected the empty value, but found {value!r}', value=value),
+                f'expected the empty value, but found {value!r}',
                 node.start_mark,
             )
         return self.find_python_module(suffix, node.start_mark)
@@ -1036,10 +993,7 @@ class RoundTripConstructor(SafeConstructor):
         # type: (Any) -> Any
         if not isinstance(node, ScalarNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a scalar node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a scalar node, but found {node.id!s}', node.start_mark,
             )
 
         if node.style == '|' and isinstance(node.value, str):
@@ -1265,7 +1219,7 @@ class RoundTripConstructor(SafeConstructor):
             raise ConstructorError(
                 None,
                 None,
-                _F('expected a sequence node, but found {node_id!s}', node_id=node.id),
+                f'expected a sequence node, but found {node.id!s}',
                 node.start_mark,
             )
         ret_val = []
@@ -1357,10 +1311,7 @@ class RoundTripConstructor(SafeConstructor):
                             raise ConstructorError(
                                 'while constructing a mapping',
                                 node.start_mark,
-                                _F(
-                                    'expected a mapping for merging, but found {subnode_id!s}',
-                                    subnode_id=subnode.id,
-                                ),
+                                f'expected a mapping for merging, but found {subnode.id!s}',
                                 subnode.start_mark,
                             )
                         merge_map_list.append((index, constructed(subnode)))
@@ -1373,11 +1324,8 @@ class RoundTripConstructor(SafeConstructor):
                     raise ConstructorError(
                         'while constructing a mapping',
                         node.start_mark,
-                        _F(
-                            'expected a mapping or list of mappings for merging, '
-                            'but found {value_node_id!s}',
-                            value_node_id=value_node.id,
-                        ),
+                        'expected a mapping or list of mappings for merging, '
+                        f'but found {value_node.id!s}',
                         value_node.start_mark,
                     )
             elif key_node.tag == 'tag:yaml.org,2002:value':
@@ -1397,10 +1345,7 @@ class RoundTripConstructor(SafeConstructor):
         # type: (Any, Any, bool) -> Any
         if not isinstance(node, MappingNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a mapping node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a mapping node, but found {node.id!s}', node.start_mark,
             )
         merge_map = self.flatten_mapping(node)
         # mapping = {}
@@ -1502,10 +1447,7 @@ class RoundTripConstructor(SafeConstructor):
         # type: (Any, Any, bool) -> Any
         if not isinstance(node, MappingNode):
             raise ConstructorError(
-                None,
-                None,
-                _F('expected a mapping node, but found {node_id!s}', node_id=node.id),
-                node.start_mark,
+                None, None, f'expected a mapping node, but found {node.id!s}', node.start_mark,
             )
         if self.loader and self.loader.comment_handling is None:
             if node.comment:
@@ -1626,7 +1568,7 @@ class RoundTripConstructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing an ordered map',
                 node.start_mark,
-                _F('expected a sequence, but found {node_id!s}', node_id=node.id),
+                f'expected a sequence, but found {node.id!s}',
                 node.start_mark,
             )
         for subnode in node.value:
@@ -1634,20 +1576,14 @@ class RoundTripConstructor(SafeConstructor):
                 raise ConstructorError(
                     'while constructing an ordered map',
                     node.start_mark,
-                    _F(
-                        'expected a mapping of length 1, but found {subnode_id!s}',
-                        subnode_id=subnode.id,
-                    ),
+                    f'expected a mapping of length 1, but found {subnode.id!s}',
                     subnode.start_mark,
                 )
             if len(subnode.value) != 1:
                 raise ConstructorError(
                     'while constructing an ordered map',
                     node.start_mark,
-                    _F(
-                        'expected a single mapping item, but found {len_subnode_val:d} items',
-                        len_subnode_val=len(subnode.value),
-                    ),
+                    f'expected a single mapping item, but found {len(subnode.value):d} items',
                     subnode.start_mark,
                 )
             key_node, value_node = subnode.value[0]
@@ -1730,9 +1666,7 @@ class RoundTripConstructor(SafeConstructor):
         raise ConstructorError(
             None,
             None,
-            _F(
-                'could not determine a constructor for the tag {node_tag!r}', node_tag=node.tag
-            ),
+            f'could not determine a constructor for the tag {node.tag!r}',
             node.start_mark,
         )
 

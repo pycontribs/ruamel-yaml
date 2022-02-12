@@ -31,7 +31,7 @@
 import inspect
 from ruamel.yaml.error import MarkedYAMLError, CommentMark  # NOQA
 from ruamel.yaml.tokens import *  # NOQA
-from ruamel.yaml.compat import _F, check_anchorname_char, nprint, nprintf  # NOQA
+from ruamel.yaml.compat import check_anchorname_char, nprint, nprintf  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Union, Text  # NOQA
@@ -323,7 +323,7 @@ class Scanner:
         raise ScannerError(
             'while scanning for the next token',
             None,
-            _F('found character {ch!r} that cannot start any token', ch=ch),
+            f'found character {ch!r} that cannot start any token',
             self.reader.get_mark(),
         )
 
@@ -922,7 +922,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F('expected alphabetic or numeric character, but found {ch!r}', ch=ch),
+                f'expected alphabetic or numeric character, but found {ch!r}',
                 self.reader.get_mark(),
             )
         value = self.reader.prefix(length)
@@ -932,7 +932,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F('expected alphabetic or numeric character, but found {ch!r}', ch=ch),
+                f'expected alphabetic or numeric character, but found {ch!r}',
                 self.reader.get_mark(),
             )
         return value
@@ -949,7 +949,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F("expected a digit or '.', but found {srp_call!r}", srp_call=srp()),
+                f"expected a digit or '.', but found {srp()!r}",
                 self.reader.get_mark(),
             )
         srf()
@@ -958,7 +958,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F("expected a digit or '.', but found {srp_call!r}", srp_call=srp()),
+                f"expected a digit or '.', but found {srp()!r}",
                 self.reader.get_mark(),
             )
         self.yaml_version = (major, minor)
@@ -974,7 +974,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F('expected a digit, but found {ch!r}', ch=ch),
+                f'expected a digit, but found {ch!r}',
                 self.reader.get_mark(),
             )
         length = 0
@@ -1006,7 +1006,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F("expected ' ', but found {ch!r}", ch=ch),
+                f"expected ' ', but found {ch!r}",
                 self.reader.get_mark(),
             )
         return value
@@ -1020,7 +1020,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F("expected ' ', but found {ch!r}", ch=ch),
+                f"expected ' ', but found {ch!r}",
                 self.reader.get_mark(),
             )
         return value
@@ -1040,7 +1040,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a directive',
                 start_mark,
-                _F('expected a comment or a line break, but found {ch!r}', ch=ch),
+                f'expected a comment or a line break, but found {ch!r}',
                 self.reader.get_mark(),
             )
         self.scan_line_break()
@@ -1072,9 +1072,9 @@ class Scanner:
             ch = srp(length)
         if not length:
             raise ScannerError(
-                _F('while scanning an {name!s}', name=name),
+                f'while scanning an {name!s}',
                 start_mark,
-                _F('expected alphabetic or numeric character, but found {ch!r}', ch=ch),
+                f'expected alphabetic or numeric character, but found {ch!r}',
                 self.reader.get_mark(),
             )
         value = self.reader.prefix(length)
@@ -1084,9 +1084,9 @@ class Scanner:
         # assert ch1 == ch
         if ch not in '\0 \t\r\n\x85\u2028\u2029?:,[]{}%@`':
             raise ScannerError(
-                _F('while scanning an {name!s}', name=name),
+                f'while scanning an {name!s}',
                 start_mark,
-                _F('expected alphabetic or numeric character, but found {ch!r}', ch=ch),
+                f'expected alphabetic or numeric character, but found {ch!r}',
                 self.reader.get_mark(),
             )
         end_mark = self.reader.get_mark()
@@ -1106,7 +1106,7 @@ class Scanner:
                 raise ScannerError(
                     'while parsing a tag',
                     start_mark,
-                    _F("expected '>', but found {srp_call!r}", srp_call=srp()),
+                    f"expected '>' but found {srp()!r}",
                     self.reader.get_mark(),
                 )
             self.reader.forward()
@@ -1135,7 +1135,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a tag',
                 start_mark,
-                _F("expected ' ', but found {ch!r}", ch=ch),
+                f"expected ' ', but found {ch!r}",
                 self.reader.get_mark(),
             )
         value = (handle, suffix)
@@ -1312,7 +1312,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a block scalar',
                 start_mark,
-                _F('expected chomping or indentation indicators, but found {ch!r}', ch=ch),
+                f'expected chomping or indentation indicators, but found {ch!r}',
                 self.reader.get_mark(),
             )
         return chomping, increment
@@ -1337,7 +1337,7 @@ class Scanner:
             raise ScannerError(
                 'while scanning a block scalar',
                 start_mark,
-                _F('expected a comment or a line break, but found {ch!r}', ch=ch),
+                f'expected a comment or a line break, but found {ch!r}',
                 self.reader.get_mark(),
             )
         self.scan_line_break()
@@ -1459,12 +1459,8 @@ class Scanner:
                             raise ScannerError(
                                 'while scanning a double-quoted scalar',
                                 start_mark,
-                                _F(
-                                    'expected escape sequence of {length:d} hexdecimal '
-                                    'numbers, but found {srp_call!r}',
-                                    length=length,
-                                    srp_call=srp(k),
-                                ),
+                                f'expected escape sequence of {length:d} '
+                                f'hexdecimal numbers, but found {srp(k)!r}',
                                 self.reader.get_mark(),
                             )
                     code = int(self.reader.prefix(length), 16)
@@ -1477,7 +1473,7 @@ class Scanner:
                     raise ScannerError(
                         'while scanning a double-quoted scalar',
                         start_mark,
-                        _F('found unknown escape character {ch!r}', ch=ch),
+                        f'found unknown escape character {ch!r}',
                         self.reader.get_mark(),
                     )
             else:
@@ -1673,9 +1669,9 @@ class Scanner:
         ch = srp()
         if ch != '!':
             raise ScannerError(
-                _F('while scanning an {name!s}', name=name),
+                f'while scanning an {name!s}',
                 start_mark,
-                _F("expected '!', but found {ch!r}", ch=ch),
+                f"expected '!', but found {ch!r}",
                 self.reader.get_mark(),
             )
         length = 1
@@ -1687,9 +1683,9 @@ class Scanner:
             if ch != '!':
                 self.reader.forward(length)
                 raise ScannerError(
-                    _F('while scanning an {name!s}', name=name),
+                    f'while scanning an {name!s}',
                     start_mark,
-                    _F("expected '!', but found {ch!r}", ch=ch),
+                    f"expected '!' but found {ch!r}",
                     self.reader.get_mark(),
                 )
             length += 1
@@ -1726,9 +1722,9 @@ class Scanner:
             length = 0
         if not chunks:
             raise ScannerError(
-                _F('while parsing an {name!s}', name=name),
+                f'while parsing an {name!s}',
                 start_mark,
-                _F('expected URI, but found {ch!r}', ch=ch),
+                f'expected URI, but found {ch!r}',
                 self.reader.get_mark(),
             )
         return "".join(chunks)
@@ -1745,13 +1741,10 @@ class Scanner:
             for k in range(2):
                 if srp(k) not in '0123456789ABCDEFabcdef':
                     raise ScannerError(
-                        _F('while scanning an {name!s}', name=name),
+                        f'while scanning an {name!s}',
                         start_mark,
-                        _F(
-                            'expected URI escape sequence of 2 hexdecimal numbers,'
-                            ' but found {srp_call!r}',
-                            srp_call=srp(k),
-                        ),
+                        f'expected URI escape sequence of 2 hexdecimal numbers, '
+                        f'but found {srp(k)!r}',
                         self.reader.get_mark(),
                     )
             code_bytes.append(int(self.reader.prefix(2), 16))
@@ -1759,9 +1752,7 @@ class Scanner:
         try:
             value = bytes(code_bytes).decode('utf-8')
         except UnicodeDecodeError as exc:
-            raise ScannerError(
-                _F('while scanning an {name!s}', name=name), start_mark, str(exc), mark
-            )
+            raise ScannerError(f'while scanning an {name!s}', start_mark, str(exc), mark)
         return value
 
     def scan_line_break(self):
@@ -2041,25 +2032,19 @@ class CommentBase:
 
     def __str__(self):
         # type: () -> str
-        return _F('{value}', value=self.value)  # type: ignore
+        return f'{self.value}'
 
     def __repr__(self):
         # type: () -> str
-        return _F('{value!r}', value=self.value)  # type: ignore
+        return f'{self.value!r}'
 
     def info(self):
         # type: () -> str
-        return _F(  # type: ignore
-            '{name}{used} {line:2}:{column:<2} "{value:40s} {function}:{fline} {ufun}:{uline}',
-            name=self.name,  # type: ignore
-            line=self.line,
-            column=self.column,
-            value=self.value + '"',
-            used=self.used,
-            function=self.function,
-            fline=self.fline,
-            ufun=self.ufun,
-            uline=self.uline,
+        xv = self.value + '"'
+        name = self.name  # type: ignore
+        return (
+            f'{name}{self.used} {self.line:2}:{self.column:<2} "{xv:40s} '
+            f'{self.function}:{self.fline} {self.ufun}:{self.uline}'
         )
 
 
@@ -2132,19 +2117,14 @@ class ScannedComments:
         # type: () -> Any
         return (
             'ParsedComments:\n  '
-            + '\n  '.join(
-                (
-                    _F('{lineno:2} {x}', lineno=lineno, x=x.info())
-                    for lineno, x in self.comments.items()
-                )
-            )
+            + '\n  '.join((f'{lineno:2} {x.info()}' for lineno, x in self.comments.items()))
             + '\n'
         )
 
     def last(self):
         # type: () -> str
         lineno, x = list(self.comments.items())[-1]
-        return _F('{lineno:2} {x}\n', lineno=lineno, x=x.info())  # type: ignore
+        return f'{lineno:2} {x.info()}\n'
 
     def any_unprocessed(self):
         # type: () -> bool
@@ -2252,11 +2232,7 @@ class ScannedComments:
     def str_unprocessed(self):
         # type: () -> Any
         return ''.join(
-            (
-                _F('  {ind:2} {x}\n', ind=ind, x=x.info())
-                for ind, x in self.comments.items()
-                if x.used == ' '
-            )
+            (f'  {ind:2} {x.info()}\n' for ind, x in self.comments.items() if x.used == ' ')
         )
 
 
@@ -2435,7 +2411,7 @@ class RoundTripScannerSC(Scanner):  # RoundTripScanner Split Comments
             raise ScannerError(
                 'while scanning a block scalar',
                 start_mark,
-                _F('expected a comment or a line break, but found {ch!r}', ch=ch),
+                f'expected a comment or a line break, but found {ch!r}',
                 self.reader.get_mark(),
             )
         if comment is not None:

@@ -12,7 +12,7 @@ from ruamel.yaml.error import YAMLError, YAMLStreamError
 from ruamel.yaml.events import *  # NOQA
 
 # fmt: off
-from ruamel.yaml.compat import _F, nprint, dbg, DBG_EVENT, \
+from ruamel.yaml.compat import nprint, dbg, DBG_EVENT, \
     check_anchorname_char, nprintf  # NOQA
 # fmt: on
 
@@ -323,15 +323,11 @@ class Emitter:
             self.write_stream_start()
             self.state = self.expect_first_document_start
         else:
-            raise EmitterError(
-                _F('expected StreamStartEvent, but got {self_event!s}', self_event=self.event)
-            )
+            raise EmitterError(f'expected StreamStartEvent, but got {self.event!s}')
 
     def expect_nothing(self):
         # type: () -> None
-        raise EmitterError(
-            _F('expected nothing, but got {self_event!s}', self_event=self.event)
-        )
+        raise EmitterError(f'expected nothing, but got {self.event!s}')
 
     # Document handlers.
 
@@ -378,12 +374,7 @@ class Emitter:
             self.write_stream_end()
             self.state = self.expect_nothing
         else:
-            raise EmitterError(
-                _F(
-                    'expected DocumentStartEvent, but got {self_event!s}',
-                    self_event=self.event,
-                )
-            )
+            raise EmitterError(f'expected DocumentStartEvent, but got {self.event!s}')
 
     def expect_document_end(self):
         # type: () -> None
@@ -395,9 +386,7 @@ class Emitter:
             self.flush_stream()
             self.state = self.expect_document_start
         else:
-            raise EmitterError(
-                _F('expected DocumentEndEvent, but got {self_event!s}', self_event=self.event)
-            )
+            raise EmitterError(f'expected DocumentEndEvent, but got {self.event!s}')
 
     def expect_document_root(self):
         # type: () -> None
@@ -472,14 +461,13 @@ class Emitter:
                     or self.event.flow_style
                     or self.check_empty_mapping()
                 ):
-                    self.expect_flow_mapping(single=self.event.nr_items == 1,
-                                             force_flow_indent=force_flow_indent)
+                    self.expect_flow_mapping(
+                        single=self.event.nr_items == 1, force_flow_indent=force_flow_indent
+                    )
                 else:
                     self.expect_block_mapping()
         else:
-            raise EmitterError(
-                _F('expected NodeEvent, but got {self_event!s}', self_event=self.event)
-            )
+            raise EmitterError('expected NodeEvent, but got {self.event!s}')
 
     def expect_alias(self):
         # type: () -> None
@@ -501,8 +489,9 @@ class Emitter:
         # type: (Optional[bool]) -> None
         if force_flow_indent:
             self.increase_indent(flow=True, sequence=True)
-        ind = self.indents.seq_flow_align(self.best_sequence_indent, self.column,
-                                          force_flow_indent)
+        ind = self.indents.seq_flow_align(
+            self.best_sequence_indent, self.column, force_flow_indent
+        )
         self.write_indicator(' ' * ind + '[', True, whitespace=True)
         if not force_flow_indent:
             self.increase_indent(flow=True, sequence=True)
@@ -557,8 +546,9 @@ class Emitter:
         # type: (Optional[bool], Optional[bool]) -> None
         if force_flow_indent:
             self.increase_indent(flow=True, sequence=False)
-        ind = self.indents.seq_flow_align(self.best_sequence_indent, self.column,
-                                          force_flow_indent)
+        ind = self.indents.seq_flow_align(
+            self.best_sequence_indent, self.column, force_flow_indent
+        )
         map_init = '{'
         if (
             single
@@ -956,28 +946,18 @@ class Emitter:
         # type: (Any) -> Any
         major, minor = version
         if major != 1:
-            raise EmitterError(
-                _F('unsupported YAML version: {major:d}.{minor:d}', major=major, minor=minor)
-            )
-        return _F('{major:d}.{minor:d}', major=major, minor=minor)
+            raise EmitterError(f'unsupported YAML version: {major:d}.{minor:d}')
+        return f'{major:d}.{minor:d}'
 
     def prepare_tag_handle(self, handle):
         # type: (Any) -> Any
         if not handle:
             raise EmitterError('tag handle must not be empty')
         if handle[0] != '!' or handle[-1] != '!':
-            raise EmitterError(
-                _F("tag handle must start and end with '!': {handle!r}", handle=handle)
-            )
+            raise EmitterError(f"tag handle must start and end with '!': {handle!r}")
         for ch in handle[1:-1]:
             if not ('0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'):
-                raise EmitterError(
-                    _F(
-                        'invalid character {ch!r} in the tag handle: {handle!r}',
-                        ch=ch,
-                        handle=handle,
-                    )
-                )
+                raise EmitterError(f'invalid character {ch!r} in the tag handle: {handle!r}')
         return handle
 
     def prepare_tag_prefix(self, prefix):
@@ -1003,7 +983,7 @@ class Emitter:
                 start = end = end + 1
                 data = ch
                 for ch in data:
-                    chunks.append(_F('%{ord_ch:02X}', ord_ch=ord(ch)))
+                    chunks.append(f'%{ord(ch):02X}')
         if start < end:
             chunks.append(prefix[start:end])
         return "".join(chunks)
@@ -1044,14 +1024,14 @@ class Emitter:
                 start = end = end + 1
                 data = ch
                 for ch in data:
-                    chunks.append(_F('%{ord_ch:02X}', ord_ch=ord(ch)))
+                    chunks.append(f'%{ord(ch):02X}')
         if start < end:
             chunks.append(suffix[start:end])
         suffix_text = "".join(chunks)
         if handle:
-            return _F('{handle!s}{suffix_text!s}', handle=handle, suffix_text=suffix_text)
+            return f'{handle!s}{suffix_text!s}'
         else:
-            return _F('!<{suffix_text!s}>', suffix_text=suffix_text)
+            return f'!<{suffix_text!s}>'
 
     def prepare_anchor(self, anchor):
         # type: (Any) -> Any
@@ -1059,13 +1039,7 @@ class Emitter:
             raise EmitterError('anchor must not be empty')
         for ch in anchor:
             if not check_anchorname_char(ch):
-                raise EmitterError(
-                    _F(
-                        'invalid character {ch!r} in the anchor: {anchor!r}',
-                        ch=ch,
-                        anchor=anchor,
-                    )
-                )
+                raise EmitterError(f'invalid character {ch!r} in the anchor: {anchor!r}')
         return anchor
 
     def analyze_scalar(self, scalar):
@@ -1312,7 +1286,7 @@ class Emitter:
 
     def write_version_directive(self, version_text):
         # type: (Any) -> None
-        data = _F('%YAML {version_text!s}', version_text=version_text)
+        data = f'%YAML {version_text!s}'  # type: Any
         if self.encoding:
             data = data.encode(self.encoding)
         self.stream.write(data)
@@ -1320,11 +1294,7 @@ class Emitter:
 
     def write_tag_directive(self, handle_text, prefix_text):
         # type: (Any, Any) -> None
-        data = _F(
-            '%TAG {handle_text!s} {prefix_text!s}',
-            handle_text=handle_text,
-            prefix_text=prefix_text,
-        )
+        data = f'%TAG {handle_text!s} {prefix_text!s}'  # type: Any
         if self.encoding:
             data = data.encode(self.encoding)
         self.stream.write(data)
@@ -1450,11 +1420,11 @@ class Emitter:
                     if ch in self.ESCAPE_REPLACEMENTS:
                         data = '\\' + self.ESCAPE_REPLACEMENTS[ch]
                     elif ch <= '\xFF':
-                        data = _F('\\x{ord_ch:02X}', ord_ch=ord(ch))
+                        data = f'\\x{ord(ch):02X}'
                     elif ch <= '\uFFFF':
-                        data = _F('\\u{ord_ch:04X}', ord_ch=ord(ch))
+                        data = f'\\u{ord(ch):04X}'
                     else:
-                        data = _F('\\U{ord_ch:08X}', ord_ch=ord(ch))
+                        data = f'\\U{ord(ch):08X}'
                     self.column += len(data)
                     if bool(self.encoding):
                         data = data.encode(self.encoding)

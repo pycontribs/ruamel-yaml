@@ -982,15 +982,8 @@ def yaml_object(yml):
 ########################################################################################
 def warn_deprecation(fun, method, arg=''):
     # type: (Any, Any, str) -> None
-    from ruamel.yaml.compat import _F
-
     warnings.warn(
-        _F(
-            '\n{fun} will be removed, use\n\n  yaml=YAML({arg})\n  yaml.{method}(...)\n\ninstead',  # NOQA
-            fun=fun,
-            method=method,
-            arg=arg,
-        ),
+        f'\n{fun} will be removed, use\n\n  yaml=YAML({arg})\n  yaml.{method}(...)\n\ninstead',  # NOQA
         PendingDeprecationWarning,  # this will show when testing with pytest/tox
         stacklevel=3,
     )

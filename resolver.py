@@ -6,7 +6,7 @@ if False:  # MYPY
     from typing import Any, Dict, List, Union, Text, Optional  # NOQA
     from ruamel.yaml.compat import VersionType  # NOQA
 
-from ruamel.yaml.compat import _DEFAULT_YAML_VERSION, _F  # NOQA
+from ruamel.yaml.compat import _DEFAULT_YAML_VERSION  # NOQA
 from ruamel.yaml.error import *  # NOQA
 from ruamel.yaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
 from ruamel.yaml.util import RegExp  # NOQA
@@ -184,9 +184,7 @@ class BaseResolver:
                     node_check = element[0]
                     index_check = True
                 else:
-                    raise ResolverError(
-                        _F('Invalid path element: {element!s}', element=element)
-                    )
+                    raise ResolverError(f'Invalid path element: {element!s}')
             else:
                 node_check = None
                 index_check = element
@@ -201,13 +199,9 @@ class BaseResolver:
                 and not isinstance(node_check, str)
                 and node_check is not None
             ):
-                raise ResolverError(
-                    _F('Invalid node checker: {node_check!s}', node_check=node_check)
-                )
+                raise ResolverError(f'Invalid node checker: {node_check!s}')
             if not isinstance(index_check, (str, int)) and index_check is not None:
-                raise ResolverError(
-                    _F('Invalid index checker: {index_check!s}', index_check=index_check)
-                )
+                raise ResolverError(f'Invalid index checker: {index_check!s}')
             new_path.append((node_check, index_check))
         if kind is str:
             kind = ScalarNode
@@ -216,7 +210,7 @@ class BaseResolver:
         elif kind is dict:
             kind = MappingNode
         elif kind not in [ScalarNode, SequenceNode, MappingNode] and kind is not None:
-            raise ResolverError(_F('Invalid node kind: {kind!s}', kind=kind))
+            raise ResolverError(f'Invalid node kind: {kind!s}')
         cls.yaml_path_resolvers[tuple(new_path), kind] = tag
 
     def descend_resolver(self, current_node, current_index):

@@ -6,8 +6,6 @@ import pytest  # NOQA
 import warnings  # NOQA
 from pathlib import Path
 
-from ruamel.yaml.compat import _F
-
 base_path = Path('data')  # that is ruamel.yaml.data
 
 
@@ -234,7 +232,7 @@ class TestYAMLData(object):
             actions = []
             self.insert_comments(data, actions)
         else:
-            _F('\n>>>>>> run type unknown: "{typ}" <<<<<<\n')
+            f'\n>>>>>> run type unknown: "{typ}" <<<<<<\n'
             raise AssertionError()
 
 

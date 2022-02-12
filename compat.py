@@ -47,18 +47,6 @@ class ordereddict(OrderedDict):  # type: ignore
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
-
-# replace with f-strings when 3.5 support is dropped
-# ft = '42'
-# assert _F('abc {ft!r}', ft=ft) == 'abc %r' % ft
-# 'abc %r' % ft -> _F('abc {ft!r}' -> f'abc {ft!r}'
-def _F(s, *superfluous, **kw):
-    # type: (Any, Any, Any) -> Any
-    if superfluous:
-        raise TypeError
-    return s.format(**kw)
-
-
 StringIO = io.StringIO
 BytesIO = io.BytesIO
 

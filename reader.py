@@ -22,7 +22,6 @@
 import codecs
 
 from ruamel.yaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
-from ruamel.yaml.compat import _F  # NOQA
 from ruamel.yaml.util import RegExp
 
 if False:  # MYPY
@@ -44,24 +43,15 @@ class ReaderError(YAMLError):
     def __str__(self):
         # type: () -> Any
         if isinstance(self.character, bytes):
-            return _F(
-                "'{self_encoding!s}' codec can't decode byte #x{ord_self_character:02x}: "
-                '{self_reason!s}\n'
-                '  in "{self_name!s}", position {self_position:d}',
-                self_encoding=self.encoding,
-                ord_self_character=ord(self.character),
-                self_reason=self.reason,
-                self_name=self.name,
-                self_position=self.position,
+            return (
+                f"'{self.encoding!s}' codec can't decode byte #x{ord(self.character):02x}: "
+                f'{self.reason!s}\n'
+                f'  in "{self.name!s}", position {self.position:d}'
             )
         else:
-            return _F(
-                'unacceptable character #x{self_character:04x}: {self_reason!s}\n'
-                '  in "{self_name!s}", position {self_position:d}',
-                self_character=self.character,
-                self_reason=self.reason,
-                self_name=self.name,
-                self_position=self.position,
+            return (
+                f'unacceptable character #x{self.character:04x}: {self.reason!s}\n'
+                f'  in "{self.name!s}", position {self.position:d}'
             )
 
 

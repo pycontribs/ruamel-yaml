@@ -3,8 +3,6 @@
 import warnings
 import textwrap
 
-from ruamel.yaml.compat import _F
-
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Text  # NOQA
 
@@ -34,12 +32,7 @@ class StreamMark:
 
     def __str__(self):
         # type: () -> Any
-        where = _F(
-            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
-            sname=self.name,
-            sline1=self.line + 1,
-            scolumn1=self.column + 1,
-        )
+        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
         return where
 
     def __eq__(self, other):
@@ -104,12 +97,7 @@ class StringMark(StreamMark):
     def __str__(self):
         # type: () -> Any
         snippet = self.get_snippet()
-        where = _F(
-            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
-            sname=self.name,
-            sline1=self.line + 1,
-            scolumn1=self.column + 1,
-        )
+        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
         if snippet is not None:
             where += ':\n' + snippet
         return where
@@ -117,12 +105,7 @@ class StringMark(StreamMark):
     def __repr__(self):
         # type: () -> Any
         snippet = self.get_snippet()
-        where = _F(
-            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
-            sname=self.name,
-            sline1=self.line + 1,
-            scolumn1=self.column + 1,
-        )
+        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
         if snippet is not None:
             where += ':\n' + snippet
         return where
