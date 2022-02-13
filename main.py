@@ -1001,6 +1001,7 @@ def error_deprecation(fun, method, arg=''):
 
 ########################################################################################
 
+# old style PyYAML top level functions, no longer work, use YAML() instance instead
 
 def scan(stream, Loader=Loader):
     # type: (StreamTextType, Any) -> Any
@@ -1193,7 +1194,7 @@ def dump(
     tags=None,
     block_seq_indent=None,
 ):
-    # type: (Any, Optional[StreamType], Any, Any, Any, Optional[bool], Optional[int], Optional[int], Optional[bool], Any, Any, Optional[bool], Optional[bool], Optional[VersionType], Any, Any) -> Optional[Any]   # NOQA
+    # type: (Any, Optional[StreamType], Any, Any, Any, Optional[bool], Optional[int], Optional[int], Optional[bool], Any, Any, Optional[bool], Optional[bool], Optional[VersionType], Any, Any) -> None   # NOQA
     """
     Serialize a Python object into a YAML stream.
     If stream is None, return the produced string instead.
@@ -1205,7 +1206,7 @@ def dump(
 
 
 def safe_dump(data, stream=None, **kwds):
-    # type: (Any, Optional[StreamType], Any) -> Optional[Any]
+    # type: (Any, Optional[StreamType], Any) -> None
     """
     Serialize a Python object into a YAML stream.
     Produce only basic YAML tags.
@@ -1234,7 +1235,7 @@ def round_trip_dump(
     top_level_colon_align=None,
     prefix_colon=None,
 ):
-    # type: (Any, Optional[StreamType], Any, Any, Any, Optional[bool], Optional[int], Optional[int], Optional[bool], Any, Any, Optional[bool], Optional[bool], Optional[VersionType], Any, Any, Any, Any) -> Optional[Any]   # NOQA
+    # type: (Any, Optional[StreamType], Any, Any, Any, Optional[bool], Optional[int], Optional[int], Optional[bool], Any, Any, Optional[bool], Optional[bool], Optional[VersionType], Any, Any, Any, Any) -> None   # NOQA
     allow_unicode = True if allow_unicode is None else allow_unicode
     error_deprecation('round_trip_dump', 'dump')
 
