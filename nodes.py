@@ -2,15 +2,21 @@
 
 import sys
 
-if False:  # MYPY
-    from typing import Dict, Any, Text  # NOQA
+from typing import Dict, Any, Text  # NOQA
 
 
 class Node:
     __slots__ = 'tag', 'value', 'start_mark', 'end_mark', 'comment', 'anchor'
 
-    def __init__(self, tag, value, start_mark, end_mark, comment=None, anchor=None):
-        # type: (Any, Any, Any, Any, Any, Any) -> None
+    def __init__(
+        self,
+        tag: Any,
+        value: Any,
+        start_mark: Any,
+        end_mark: Any,
+        comment: Any = None,
+        anchor: Any = None,
+    ) -> None:
         self.tag = tag
         self.value = value
         self.start_mark = start_mark
@@ -18,8 +24,7 @@ class Node:
         self.comment = comment
         self.anchor = anchor
 
-    def __repr__(self):
-        # type: () -> Any
+    def __repr__(self) -> Any:
         value = self.value
         # if isinstance(value, list):
         #     if len(value) == 0:
@@ -36,8 +41,7 @@ class Node:
         value = repr(value)
         return f'{self.__class__.__name__!s}(tag={self.tag!r}, value={value!s})'
 
-    def dump(self, indent=0):
-        # type: (int) -> None
+    def dump(self, indent: int = 0) -> None:
         if isinstance(self.value, str):
             sys.stdout.write(
                 '{}{}(tag={!r}, value={!r})\n'.format(
@@ -76,9 +80,15 @@ class ScalarNode(Node):
     id = 'scalar'
 
     def __init__(
-        self, tag, value, start_mark=None, end_mark=None, style=None, comment=None, anchor=None
-    ):
-        # type: (Any, Any, Any, Any, Any, Any, Any) -> None
+        self,
+        tag: Any,
+        value: Any,
+        start_mark: Any = None,
+        end_mark: Any = None,
+        style: Any = None,
+        comment: Any = None,
+        anchor: Any = None,
+    ) -> None:
         Node.__init__(self, tag, value, start_mark, end_mark, comment=comment, anchor=anchor)
         self.style = style
 
@@ -88,15 +98,14 @@ class CollectionNode(Node):
 
     def __init__(
         self,
-        tag,
-        value,
-        start_mark=None,
-        end_mark=None,
-        flow_style=None,
-        comment=None,
-        anchor=None,
-    ):
-        # type: (Any, Any, Any, Any, Any, Any, Any) -> None
+        tag: Any,
+        value: Any,
+        start_mark: Any = None,
+        end_mark: Any = None,
+        flow_style: Any = None,
+        comment: Any = None,
+        anchor: Any = None,
+    ) -> None:
         Node.__init__(self, tag, value, start_mark, end_mark, comment=comment)
         self.flow_style = flow_style
         self.anchor = anchor
@@ -113,15 +122,14 @@ class MappingNode(CollectionNode):
 
     def __init__(
         self,
-        tag,
-        value,
-        start_mark=None,
-        end_mark=None,
-        flow_style=None,
-        comment=None,
-        anchor=None,
-    ):
-        # type: (Any, Any, Any, Any, Any, Any, Any) -> None
+        tag: Any,
+        value: Any,
+        start_mark: Any = None,
+        end_mark: Any = None,
+        flow_style: Any = None,
+        comment: Any = None,
+        anchor: Any = None,
+    ) -> None:
         CollectionNode.__init__(
             self, tag, value, start_mark, end_mark, flow_style, comment, anchor
         )

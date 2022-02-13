@@ -1,9 +1,8 @@
 # coding: utf-8
 
-if False:  # MYPY
-    from typing import Dict, Any  # NOQA
+from typing import Dict, Any
 
-_package_data = dict(
+_package_data: Dict[str, Any] = dict(
     full_package_name='ruamel.yaml',
     version_info=(0, 18, 0, 'dev', 0),
     __version__='0.18.0.dev.0',
@@ -40,7 +39,7 @@ _package_data = dict(
     # universal=True,
     python_requires='>=3',
     rtfd='yaml',
-)  # type: Dict[Any, Any]
+)
 
 
 version_info = _package_data['version_info']
