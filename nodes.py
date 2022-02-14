@@ -42,20 +42,16 @@ class Node:
         return f'{self.__class__.__name__!s}(tag={self.tag!r}, value={value!s})'
 
     def dump(self, indent: int = 0) -> None:
+        xx = self.__class__.__name__
+        xi = '  ' * indent
         if isinstance(self.value, str):
-            sys.stdout.write(
-                '{}{}(tag={!r}, value={!r})\n'.format(
-                    '  ' * indent, self.__class__.__name__, self.tag, self.value
-                )
-            )
+            sys.stdout.write(f'{xi}{xx}(tag={self.tag!r}, value={self.value!r})\n')
             if self.comment:
-                sys.stdout.write('    {}comment: {})\n'.format('  ' * indent, self.comment))
+                sys.stdout.write(f'    {xi}comment: {self.comment})\n')
             return
-        sys.stdout.write(
-            '{}{}(tag={!r})\n'.format('  ' * indent, self.__class__.__name__, self.tag)
-        )
+        sys.stdout.write(f'{xi}{xx}(tag={self.tag!r})\n')
         if self.comment:
-            sys.stdout.write('    {}comment: {})\n'.format('  ' * indent, self.comment))
+            sys.stdout.write(f'    {xi}comment: {self.comment})\n')
         for v in self.value:
             if isinstance(v, tuple):
                 for v1 in v:
@@ -63,7 +59,7 @@ class Node:
             elif isinstance(v, Node):
                 v.dump(indent + 1)
             else:
-                sys.stdout.write('Node value type? {}\n'.format(type(v)))
+                sys.stdout.write(f'Node value type? {type(v)}\n')
 
 
 class ScalarNode(Node):

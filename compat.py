@@ -93,7 +93,7 @@ if bool(_debug):
 
         def dump(self) -> None:
             for k in sorted(self.map):
-                sys.stdout.write('{} -> {}'.format(k, self.map[k]))
+                sys.stdout.write(f'{k} -> {self.map[k]}')
 
     object_counter = ObjectCounter()
 
@@ -209,13 +209,11 @@ class MutableSliceableSequence(collections.abc.MutableSequence):  # type: ignore
             # need to test before changing, in case TypeError is caught
             if nr_assigned_items < len(value):
                 raise TypeError(
-                    'too many elements in value {} < {}'.format(nr_assigned_items, len(value))
+                    f'too many elements in value {nr_assigned_items} < {len(value)}'
                 )
             elif nr_assigned_items > len(value):
                 raise TypeError(
-                    'not enough elements in value {} > {}'.format(
-                        nr_assigned_items, len(value)
-                    )
+                    f'not enough elements in value {nr_assigned_items} > {len(value)}'
                 )
             for idx, i in enumerate(range(*range_parms)):
                 self[i] = value[idx]

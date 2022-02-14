@@ -33,7 +33,7 @@ from ruamel.yaml.scalarbool import ScalarBoolean
 from ruamel.yaml.timestamp import TimeStamp
 from ruamel.yaml.util import timestamp_regexp, create_timestamp
 
-from typing import Any, Dict, List, Set, Generator, Union, Optional  # NOQA
+from typing import Any, Dict, List, Set, Iterator, Union, Optional  # NOQA
 
 
 __all__ = ['BaseConstructor', 'SafeConstructor', 'Constructor',
@@ -79,9 +79,9 @@ class BaseConstructor:
         try:
             return self.loader._composer
         except AttributeError:
-            sys.stdout.write('slt {}\n'.format(type(self)))
-            sys.stdout.write('slc {}\n'.format(self.loader._composer))
-            sys.stdout.write('{}\n'.format(dir(self)))
+            sys.stdout.write(f'slt {type(self)}\n')
+            sys.stdout.write(f'slc {self.loader._composer}\n')
+            sys.stdout.write(f'{dir(self)}\n')
             raise
 
     @property
@@ -257,8 +257,8 @@ class BaseConstructor:
                 args = [
                     'while constructing a mapping',
                     node.start_mark,
-                    'found duplicate key "{}" with value "{}" '
-                    '(original value: "{}")'.format(key, value, mk),
+                    f'found duplicate key "{key}" with value "{value}" '
+                    f'(original value: "{mk}")',
                     key_node.start_mark,
                     """
                     To suppress this check see:
@@ -282,7 +282,7 @@ class BaseConstructor:
                 args = [
                     'while constructing a set',
                     node.start_mark,
-                    'found duplicate key "{}"'.format(key),
+                    f'found duplicate key "{key}"',
                     key_node.start_mark,
                     """
                     To suppress this check see:
@@ -350,7 +350,7 @@ class SafeConstructor(BaseConstructor):
                     args = [
                         'while constructing a mapping',
                         node.start_mark,
-                        'found duplicate key "{}"'.format(key_node.value),
+                        f'found duplicate key "{key_node.value}"',
                         key_node.start_mark,
                         """
                         To suppress this check see:
@@ -522,7 +522,7 @@ class SafeConstructor(BaseConstructor):
                 raise ConstructorError(
                     None,
                     None,
-                    'failed to construct timestamp from "{}"'.format(node.value),
+                    f'failed to construct timestamp from "{node.value}"',
                     node.start_mark,
                 )
             values = match.groupdict()
@@ -1229,7 +1229,7 @@ class RoundTripConstructor(SafeConstructor):
                     args = [
                         'while constructing a mapping',
                         node.start_mark,
-                        'found duplicate key "{}"'.format(key_node.value),
+                        f'found duplicate key "{key_node.value}"',
                         key_node.start_mark,
                         """
                         To suppress this check see:
@@ -1435,7 +1435,7 @@ class RoundTripConstructor(SafeConstructor):
                     nprintf('nc7b', value_node.comment)
             typ.add(key)
 
-    def construct_yaml_seq(self, node: Any) -> Any:
+    def construct_yaml_seq(self, node: Any) -> Iterator[CommentedSeq]:
         data = CommentedSeq()
         data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         # if node.comment:
@@ -1444,7 +1444,7 @@ class RoundTripConstructor(SafeConstructor):
         data.extend(self.construct_rt_sequence(node, data))
         self.set_collection_style(data, node)
 
-    def construct_yaml_map(self, node: Any) -> Any:
+    def construct_yaml_map(self, node: Any) -> Iterator[CommentedMap]:
         data = CommentedMap()
         data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         yield data
@@ -1483,7 +1483,7 @@ class RoundTripConstructor(SafeConstructor):
                     a = getattr(data, Anchor.attrib)
                 a.value = node.anchor
 
-    def construct_yaml_omap(self, node: Any) -> Any:
+    def construct_yaml_omap(self, node: Any) -> Iterator[CommentedOrderedMap]:
         # Note: we do now check for duplicate keys
         omap = CommentedOrderedMap()
         omap._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
@@ -1544,13 +1544,15 @@ class RoundTripConstructor(SafeConstructor):
                     nprintf('nc9c', value_node.comment)
             omap[key] = value
 
-    def construct_yaml_set(self, node: Any) -> Any:
+    def construct_yaml_set(self, node: Any) -> Iterator[CommentedSet]:
         data = CommentedSet()
         data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         yield data
         self.construct_setting(node, data)
 
-    def construct_undefined(self, node: Any) -> Any:
+    def construct_unknown(
+        self, node: Any
+    ) -> Iterator[Union[CommentedMap, TaggedScalar, CommentedSeq]]:
         try:
             if isinstance(node, MappingNode):
                 data = CommentedMap()
@@ -1605,7 +1607,9 @@ class RoundTripConstructor(SafeConstructor):
             node.start_mark,
         )
 
-    def construct_yaml_timestamp(self, node: Any, values: Any = None) -> Any:
+    def construct_yaml_timestamp(
+        self, node: Any, values: Any = None
+    ) -> Union[datetime.date, datetime.datetime, TimeStamp]:
         try:
             match = self.timestamp_regexp.match(node.value)
         except TypeError:
@@ -1614,7 +1618,7 @@ class RoundTripConstructor(SafeConstructor):
             raise ConstructorError(
                 None,
                 None,
-                'failed to construct timestamp from "{}"'.format(node.value),
+                f'failed to construct timestamp from "{node.value}"',
                 node.start_mark,
             )
         values = match.groupdict()
@@ -1637,9 +1641,15 @@ class RoundTripConstructor(SafeConstructor):
             if values['tz_sign'] == '-':
                 delta = -delta
         # should check for None and solve issue 366 should be tzinfo=delta)
-        data = TimeStamp(
-            dd.year, dd.month, dd.day, dd.hour, dd.minute, dd.second, dd.microsecond
-        )
+        # isinstance(datetime.datetime.now, datetime.date) is true)
+        if isinstance(dd, datetime.datetime):
+            data = TimeStamp(
+                dd.year, dd.month, dd.day, dd.hour, dd.minute, dd.second, dd.microsecond
+            )
+        else:
+            # ToDo: make this into a DateStamp?
+            data = TimeStamp(dd.year, dd.month, dd.day, 0, 0, 0, 0)
+            return data
         if delta:
             data._yaml['delta'] = delta
             tz = values['tz_sign'] + values['tz_hour']
@@ -1649,12 +1659,11 @@ class RoundTripConstructor(SafeConstructor):
         else:
             if values['tz']:  # no delta
                 data._yaml['tz'] = values['tz']
-
         if values['t']:
             data._yaml['t'] = True
         return data
 
-    def construct_yaml_bool(self, node: Any) -> Any:
+    def construct_yaml_sbool(self, node: Any) -> Union[bool, ScalarBoolean]:
         b = SafeConstructor.construct_yaml_bool(self, node)
         if node.anchor:
             return ScalarBoolean(b, anchor=node.anchor)
@@ -1666,7 +1675,7 @@ RoundTripConstructor.add_constructor(
 )
 
 RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:bool', RoundTripConstructor.construct_yaml_bool
+    'tag:yaml.org,2002:bool', RoundTripConstructor.construct_yaml_sbool
 )
 
 RoundTripConstructor.add_constructor(
@@ -1709,4 +1718,4 @@ RoundTripConstructor.add_constructor(
     'tag:yaml.org,2002:map', RoundTripConstructor.construct_yaml_map
 )
 
-RoundTripConstructor.add_constructor(None, RoundTripConstructor.construct_undefined)
+RoundTripConstructor.add_constructor(None, RoundTripConstructor.construct_unknown)

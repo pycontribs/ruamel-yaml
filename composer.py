@@ -112,13 +112,10 @@ class Composer:
         anchor = event.anchor
         if anchor is not None:  # have an anchor
             if anchor in self.anchors:
-                # raise ComposerError(
-                #     "found duplicate anchor %r; first occurrence"
-                #     % (anchor), self.anchors[anchor].start_mark,
-                #     "second occurrence", event.start_mark)
                 ws = (
-                    '\nfound duplicate anchor {!r}\nfirst occurrence {}\nsecond occurrence '
-                    '{}'.format((anchor), self.anchors[anchor].start_mark, event.start_mark)
+                    f'\nfound duplicate anchor {anchor!r}\n'
+                    f'first occurrence {self.anchors[anchor].start_mark}\n'
+                    f'second occurrence {event.start_mark}'
                 )
                 warnings.warn(ws, ReusedAnchorWarning)
         self.resolver.descend_resolver(parent, index)
@@ -172,9 +169,9 @@ class Composer:
         end_event = self.parser.get_event()
         if node.flow_style is True and end_event.comment is not None:
             if node.comment is not None:
+                x = node.flow_style
                 nprint(
-                    'Warning: unexpected end_event commment in sequence '
-                    'node {}'.format(node.flow_style)
+                    f'Warning: unexpected end_event commment in sequence node {x}'
                 )
             node.comment = end_event.comment
         node.end_mark = end_event.end_mark

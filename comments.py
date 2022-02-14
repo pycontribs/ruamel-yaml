@@ -103,7 +103,7 @@ class Comment:
             end = ',\n  end=' + str(self._post)
         else:
             end = ""
-        return 'Comment(comment={0},\n  items={1}{2})'.format(self.comment, self._items, end)
+        return f'Comment(comment={self.comment},\n  items={self._items}{end})'
 
     def _old__repr__(self) -> str:
         if bool(self._post):
@@ -115,11 +115,11 @@ class Comment:
         except ValueError:
             ln = ''  # type: ignore
         it = '    '.join(
-            ['{:{}} {}\n'.format(str(k) + ':', ln, v) for k, v in self._items.items()]
+            [f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()]
         )
         if it:
             it = '\n    ' + it + '  '
-        return 'Comment(\n  start={},\n  items={{{}}}{})'.format(self.comment, it, end)
+        return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'
 
     def __repr__(self) -> str:
         if self._pre is None:
@@ -133,11 +133,11 @@ class Comment:
         except ValueError:
             ln = ''  # type: ignore
         it = '    '.join(
-            ['{:{}} {}\n'.format(str(k) + ':', ln, v) for k, v in self._items.items()]
+            [f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()]
         )
         if it:
             it = '\n    ' + it + '  '
-        return 'Comment(\n  pre={},\n  items={{{}}}{})'.format(self.pre, it, end)
+        return f'Comment(\n  pre={self.pre},\n  items={{{it}}}{end})'
 
     @property
     def items(self) -> Any:
@@ -278,7 +278,7 @@ class Tag:
         self.value = None
 
     def __repr__(self) -> Any:
-        return '{0.__class__.__name__}({0.value!r})'.format(self)
+        return f'{self.__class__.__name__}({self.value!r})'
 
 
 class CommentedBase:
@@ -969,7 +969,7 @@ class CommentedMap(ordereddict, CommentedBase):
 # based on brownie mappings
 @classmethod  # type: ignore
 def raise_immutable(cls: Any, *args: Any, **kwargs: Any) -> None:
-    raise TypeError('{} objects are immutable'.format(cls.__name__))
+    raise TypeError(f'{cls.__name__} objects are immutable')
 
 
 class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
@@ -1098,7 +1098,7 @@ class CommentedSet(MutableSet, CommentedBase):  # type: ignore  # NOQA
         return len(self.odict)
 
     def __repr__(self) -> str:
-        return 'set({0!r})'.format(self.odict.keys())
+        return f'set({self.odict.keys()!r})'
 
 
 class TaggedScalar(CommentedBase):
@@ -1120,14 +1120,14 @@ def dump_comments(d: Any, name: str = "", sep: str = '.', out: Any = sys.stdout)
     """
     if isinstance(d, dict) and hasattr(d, 'ca'):
         if name:
-            out.write('{} {}\n'.format(name, type(d)))
-        out.write('{!r}\n'.format(d.ca))  # type: ignore
+            out.write(f'{name} {type(d)}\n')
+        out.write(f'{d.ca!r}\n')  # type: ignore
         for k in d:
             dump_comments(d[k], name=(name + sep + str(k)) if name else k, sep=sep, out=out)
     elif isinstance(d, list) and hasattr(d, 'ca'):
         if name:
-            out.write('{} {}\n'.format(name, type(d)))
-        out.write('{!r}\n'.format(d.ca))  # type: ignore
+            out.write(f'{name} {type(d)}\n')
+        out.write(f'{d.ca!r}\n')  # type: ignore
         for idx, k in enumerate(d):
             dump_comments(
                 k, name=(name + sep + str(idx)) if name else str(idx), sep=sep, out=out

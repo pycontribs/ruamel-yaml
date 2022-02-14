@@ -33,7 +33,7 @@ class Token:
             arguments.append('comment: ' + str(self._comment))
         except:  # NOQA
             pass
-        return '{}({})'.format(self.__class__.__name__, ', '.join(arguments))
+        return f'{self.__class__.__name__}({", ".join(arguments)})'
 
     @property
     def column(self) -> int:
@@ -268,9 +268,8 @@ class KeyToken(Token):
     __slots__ = ()
     id = '?'
 
-    # def x__repr__(self):
-    #     return 'KeyToken({})'.format(
-    #         self.start_mark.buffer[self.start_mark.index:].split(None, 1)[0])
+#   def x__repr__(self):
+#       return f'KeyToken({self.start_mark.buffer[self.start_mark.index:].split(None, 1)[0]})'
 
 
 class ValueToken(Token):
@@ -356,7 +355,7 @@ class CommentToken(Token):
             delattr(self, 'pre_done')
 
     def __repr__(self) -> Any:
-        v = '{!r}'.format(self.value)
+        v = f'{self.value!r}'
         if SHOW_LINES:
             try:
                 v += ', line: ' + str(self.start_mark.line)
@@ -366,7 +365,7 @@ class CommentToken(Token):
                 v += ', col: ' + str(self.start_mark.column)
             except:  # NOQA
                 pass
-        return 'CommentToken({})'.format(v)
+        return f'CommentToken({v})'
 
     def __eq__(self, other: Any) -> bool:
         if self.start_mark != other.start_mark:

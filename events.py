@@ -37,15 +37,11 @@ class Event:
                 if v is not None:
                     arguments.append(f'{key!s}={v!r}')
             if self.comment not in [None, CommentCheck]:
-                arguments.append('comment={!r}'.format(self.comment))
+                arguments.append(f'comment={self.comment!r}')
             if SHOW_LINES:
                 arguments.append(
-                    '({}:{}/{}:{})'.format(
-                        self.start_mark.line,
-                        self.start_mark.column,
-                        self.end_mark.line,
-                        self.end_mark.column,
-                    )
+                    f'({self.start_mark.line}:{self.start_mark.column}/'
+                    f'{self.end_mark.line}:{self.end_mark.column})'
                 )
             arguments = ', '.join(arguments)  # type: ignore
         else:
@@ -56,7 +52,7 @@ class Event:
             ]
             arguments = ', '.join([f'{key!s}={getattr(self, key)!r}' for key in attributes])
             if self.comment not in [None, CommentCheck]:
-                arguments += ', comment={!r}'.format(self.comment)
+                arguments += f', comment={self.comment!r}'
         return f'{self.__class__.__name__!s}({arguments!s})'
 
 

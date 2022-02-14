@@ -31,7 +31,7 @@ class SerializerError(YAMLError):
 class Serializer:
 
     # 'id' and 3+ numbers, but not 000
-    ANCHOR_TEMPLATE = 'id%03d'
+    ANCHOR_TEMPLATE = 'id{:03d}'
     ANCHOR_RE = RegExp('id(?!000$)\\d{3,}')
 
     def __init__(
@@ -139,7 +139,7 @@ class Serializer:
             anchor = None
         if anchor is None:
             self.last_anchor_id += 1
-            return self.ANCHOR_TEMPLATE % self.last_anchor_id
+            return self.ANCHOR_TEMPLATE.format(self.last_anchor_id)
         return anchor
 
     def serialize_node(self, node: Any, parent: Any, index: Any) -> None:

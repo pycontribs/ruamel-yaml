@@ -9,7 +9,7 @@ from functools import partial
 import re
 
 
-from typing import Any, Dict, Optional, List, Text  # NOQA
+from typing import Any, Dict, Optional, List, Text, Callable, Union  # NOQA
 from .compat import StreamTextType  # NOQA
 
 
@@ -24,7 +24,7 @@ class LazyEval:
     return value (or, prior to evaluation, func and arguments), in its closure.
     """
 
-    def __init__(self, func: Any, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         def lazy_self() -> Any:
             return_value = func(*args, **kwargs)
             object.__setattr__(self, 'lazy_self', lambda: return_value)
@@ -32,13 +32,13 @@ class LazyEval:
 
         object.__setattr__(self, 'lazy_self', lazy_self)
 
-    def __getattribute__(self, name: Any) -> Any:
+    def __getattribute__(self, name: str) -> Any:
         lazy_self = object.__getattribute__(self, 'lazy_self')
         if name == 'lazy_self':
             return lazy_self
         return getattr(lazy_self(), name)
 
-    def __setattr__(self, name: Any, value: Any) -> None:
+    def __setattr__(self, name: str, value: Any) -> None:
         setattr(self.lazy_self(), name, value)
 
 
@@ -72,7 +72,7 @@ def create_timestamp(
     tz_sign: Any,
     tz_hour: Any,
     tz_minute: Any,
-) -> Any:
+) -> Union[datetime.datetime, datetime.date]:
     # create a timestamp from match against timestamp_regexp
     MAX_FRAC = 999999
     year = int(year)
@@ -222,7 +222,7 @@ def _walk_section(s: Any, level: int = 0) -> Any:
             x = '|\n' + i + x.strip().replace('\n', '\n' + i)
         elif ':' in x:
             x = "'" + x.replace("'", "''") + "'"
-        line = '{0}{1}: {2}'.format(indent, name, x)
+        line = f'{indent}{name}: {x}'
         c = s.inline_comments[name]
         if c:
             line += ' ' + c
@@ -230,7 +230,7 @@ def _walk_section(s: Any, level: int = 0) -> Any:
     for name in s.sections:
         for c in s.comments[name]:
             yield indent + c.strip()
-        line = '{0}{1}:'.format(indent, name)
+        line = f'{indent}{name}:'
         c = s.inline_comments[name]
         if c:
             line += ' ' + c

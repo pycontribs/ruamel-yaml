@@ -23,7 +23,7 @@ class TestAnchorsAliases:
     def test_anchor_id_renumber(self):
         from ruamel.yaml.serializer import Serializer
 
-        assert Serializer.ANCHOR_TEMPLATE == 'id%03d'
+        assert Serializer.ANCHOR_TEMPLATE == 'id{:03d}'
         data = load("""
         a: &id002
           b: 1

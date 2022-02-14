@@ -85,19 +85,11 @@ class ScalarFloat(float):
         self.anchor.value = value
         self.anchor.always_dump = always_dump
 
-    def dump(self, out: Any = sys.stdout) -> Any:
+    def dump(self, out: Any = sys.stdout) -> None:
         out.write(
-            'ScalarFloat({}| w:{}, p:{}, s:{}, lz:{}, _:{}|{}, w:{}, s:{})\n'.format(
-                self,
-                self._width,  # type: ignore
-                self._prec,  # type: ignore
-                self._m_sign,  # type: ignore
-                self._m_lead0,  # type: ignore
-                self._underscore,  # type: ignore
-                self._exp,  # type: ignore
-                self._e_width,  # type: ignore
-                self._e_sign,  # type: ignore
-            )
+            f'ScalarFloat({self}| w:{self._width}, p:{self._prec}, '  # type: ignore
+            f's:{self._m_sign}, lz:{self._m_lead0}, _:{self._underscore}|{self._exp}'
+            f', w:{self._e_width}, s:{self._e_sign})\n'
         )
 
 

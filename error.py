@@ -78,7 +78,7 @@ class StringMark(StreamMark):
                 break
         snippet = self.buffer[start:end]
         caret = '^'
-        caret = '^ (line: {})'.format(self.line + 1)
+        caret = f'^ (line: {self.line + 1})'
         return (
             ' ' * indent
             + head
@@ -232,21 +232,19 @@ class MantissaNoDotYAML1_1Warning(YAMLWarning):
     def __str__(self) -> Any:
         line = self.node.start_mark.line
         col = self.node.start_mark.column
-        return """
+        return f"""
 In YAML 1.1 floating point values should have a dot ('.') in their mantissa.
 See the Floating-Point Language-Independent Type for YAML™ Version 1.1 specification
 ( http://yaml.org/type/float.html ). This dot is not required for JSON nor for YAML 1.2
 
-Correct your float: "{}" on line: {}, column: {}
+Correct your float: "{self.flt}" on line: {line}, column: {col}
 
 or alternatively include the following in your code:
 
   import warnings
   warnings.simplefilter('ignore', ruamel.yaml.error.MantissaNoDotYAML1_1Warning)
 
-""".format(
-            self.flt, line, col
-        )
+"""
 
 
 warnings.simplefilter('once', MantissaNoDotYAML1_1Warning)

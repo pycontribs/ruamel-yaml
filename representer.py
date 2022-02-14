@@ -576,7 +576,7 @@ class RoundTripRepresenter(SafeRepresenter):
 
     def represent_scalar_int(self, data: Any) -> ScalarNode:
         if data._width is not None:
-            s = '{:0{}d}'.format(data, data._width)
+            s = f'{data:0{data._width}d}'
         else:
             s = format(data, 'd')
         anchor = data.yaml_anchor(any=True)
@@ -585,7 +585,7 @@ class RoundTripRepresenter(SafeRepresenter):
     def represent_binary_int(self, data: Any) -> ScalarNode:
         if data._width is not None:
             # cannot use '{:#0{}b}', that strips the zeros
-            s = '{:0{}b}'.format(data, data._width)
+            s = f'{data:0{data._width}b}'
         else:
             s = format(data, 'b')
         anchor = data.yaml_anchor(any=True)
@@ -594,7 +594,7 @@ class RoundTripRepresenter(SafeRepresenter):
     def represent_octal_int(self, data: Any) -> ScalarNode:
         if data._width is not None:
             # cannot use '{:#0{}o}', that strips the zeros
-            s = '{:0{}o}'.format(data, data._width)
+            s = f'{data:0{data._width}o}'
         else:
             s = format(data, 'o')
         anchor = data.yaml_anchor(any=True)
@@ -603,7 +603,7 @@ class RoundTripRepresenter(SafeRepresenter):
     def represent_hex_int(self, data: Any) -> ScalarNode:
         if data._width is not None:
             # cannot use '{:#0{}x}', that strips the zeros
-            s = '{:0{}x}'.format(data, data._width)
+            s = f'{data:0{data._width}x}'
         else:
             s = format(data, 'x')
         anchor = data.yaml_anchor(any=True)
@@ -612,7 +612,7 @@ class RoundTripRepresenter(SafeRepresenter):
     def represent_hex_caps_int(self, data: Any) -> ScalarNode:
         if data._width is not None:
             # cannot use '{:#0{}X}', that strips the zeros
-            s = '{:0{}X}'.format(data, data._width)
+            s = f'{data:0{data._width}X}'
         else:
             s = format(data, 'X')
         anchor = data.yaml_anchor(any=True)
@@ -632,27 +632,23 @@ class RoundTripRepresenter(SafeRepresenter):
             return self.represent_scalar('tag:yaml.org,2002:float', value, anchor=anchor)
         if data._exp is None and data._prec > 0 and data._prec == data._width - 1:
             # no exponent, but trailing dot
-            value = '{}{:d}.'.format(data._m_sign if data._m_sign else "", abs(int(data)))
+            value = f'{data._m_sign if data._m_sign else ""}{abs(int(data)):d}.'
         elif data._exp is None:
             # no exponent, "normal" dot
             prec = data._prec
             ms = data._m_sign if data._m_sign else ""
             # -1 for the dot
-            value = '{}{:0{}.{}f}'.format(
-                ms, abs(data), data._width - len(ms), data._width - prec - 1
-            )
+            value = f'{ms}{abs(data):0{data._width - len(ms)}.{data._width - prec - 1}f}'
             if prec == 0 or (prec == 1 and ms != ""):
                 value = value.replace('0.', '.')
             while len(value) < data._width:
                 value += '0'
         else:
             # exponent
-            m, es = '{:{}.{}e}'.format(
-                # data, data._width, data._width - data._prec + (1 if data._m_sign else 0)
-                data,
-                data._width,
-                data._width + (1 if data._m_sign else 0),
-            ).split('e')
+            (
+                m,
+                es,
+            ) = f'{data:{data._width}.{data._width + (1 if data._m_sign else 0)}e}'.split('e')
             w = data._width if data._prec > 0 else (data._width + 1)
             if data < 0:
                 w += 1
@@ -672,10 +668,10 @@ class RoundTripRepresenter(SafeRepresenter):
                 while (len(m1) + len(m2) - (1 if data._m_sign else 0)) < data._width:
                     m2 += '0'
                     e -= 1
-                value = m1 + m2 + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
+                value = m1 + m2 + data._exp + f'{e:{esgn}0{data._e_width}d}'
             elif data._prec == 0:  # mantissa with trailing dot
                 e -= len(m2)
-                value = m1 + m2 + '.' + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
+                value = m1 + m2 + '.' + data._exp + f'x{e:{esgn}0{data._e_width}d}'
             else:
                 if data._m_lead0 > 0:
                     m2 = '0' * (data._m_lead0 - 1) + m1 + m2
@@ -686,7 +682,7 @@ class RoundTripRepresenter(SafeRepresenter):
                     m1 += m2[0]
                     m2 = m2[1:]
                     e -= 1
-                value = m1 + '.' + m2 + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
+                value = m1 + '.' + m2 + data._exp + f'{e:{esgn}0{data._e_width}d}'
 
         if value is None:
             value = repr(data).lower()

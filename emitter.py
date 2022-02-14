@@ -1628,7 +1628,7 @@ class Emitter:
 
     def write_comment(self, comment: Any, pre: bool = False) -> None:
         value = comment.value
-        # nprintf('{:02d} {:02d} {!r}'.format(self.column, comment.start_mark.column, value))
+        # nprintf(f'{self.column:02d} {comment.start_mark.column:02d} {value!r}')
         if not pre and value[-1] == '\n':
             value = value[:-1]
         try:
@@ -1676,7 +1676,7 @@ class Emitter:
                 if isinstance(event, start_events):
                     comment.pre_done = True
         except TypeError:
-            sys.stdout.write('eventtt {} {}'.format(type(event), event))
+            sys.stdout.write(f'eventtt {type(event)} {event}')
             raise
         return True
 

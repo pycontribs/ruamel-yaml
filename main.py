@@ -176,7 +176,7 @@ class YAML:
                 break
         if typ_found == 0:
             raise NotImplementedError(
-                'typ "{}"not recognised (need to install plug-in?)'.format(self.typ)
+                f'typ "{self.typ}" not recognised (need to install plug-in?)'
             )
 
     @property
@@ -555,9 +555,9 @@ class YAML:
             if not self._output:
                 raise TypeError('Missing output stream while dumping from context manager')
             if transform is not None:
+                x = self.__class__.__name__
                 raise TypeError(
-                    '{}.dump() in the context manager cannot have transform keyword '
-                    ''.format(self.__class__.__name__)
+                    f'{x}.dump() in the context manager cannot have transform keyword'
                 )
             self._context_manager.dump(data)
         else:  # old style

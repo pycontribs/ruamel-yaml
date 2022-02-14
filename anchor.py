@@ -15,4 +15,4 @@ class Anchor:
 
     def __repr__(self) -> Any:
         ad = ', (always dump)' if self.always_dump else ""
-        return 'Anchor({!r}{})'.format(self.value, ad)
+        return f'Anchor({self.value!r}{ad})'
