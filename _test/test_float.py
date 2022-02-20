@@ -53,8 +53,9 @@ class TestFloat:
         for d in data:
             assert -0.00001 < d < 0.00001
 
-    def Xtest_round_trip_non_exp_trailing_dot(self):
+    def test_round_trip_exp_trailing_dot(self):
         data = round_trip("""\
+        - 3.e4
         """)
         print(data)
 

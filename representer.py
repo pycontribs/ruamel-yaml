@@ -671,7 +671,7 @@ class RoundTripRepresenter(SafeRepresenter):
                 value = m1 + m2 + data._exp + f'{e:{esgn}0{data._e_width}d}'
             elif data._prec == 0:  # mantissa with trailing dot
                 e -= len(m2)
-                value = m1 + m2 + '.' + data._exp + f'x{e:{esgn}0{data._e_width}d}'
+                value = m1 + m2 + '.' + data._exp + f'{e:{esgn}0{data._e_width}d}'
             else:
                 if data._m_lead0 > 0:
                     m2 = '0' * (data._m_lead0 - 1) + m1 + m2

@@ -33,7 +33,8 @@ from ruamel.yaml.constructor import (
 from ruamel.yaml.loader import Loader as UnsafeLoader  # NOQA
 from ruamel.yaml.comments import CommentedMap, CommentedSeq, C_PRE
 
-from typing import List, Set, Dict, Union, Any, Callable, Optional, Text  # NOQA
+from typing import List, Set, Dict, Union, Any, Callable, Optional, Text, Type  # NOQA
+from types import TracebackType
 from ruamel.yaml.compat import StreamType, StreamTextType, VersionType  # NOQA
 from pathlib import Path
 
@@ -144,12 +145,12 @@ class YAML:
         self.stream = None
         self.canonical = None
         self.old_indent = None
-        self.width = None
+        self.width: Union[int, None] = None
         self.line_break = None
 
-        self.map_indent = None
-        self.sequence_indent = None
-        self.sequence_dash_offset = 0
+        self.map_indent: Union[int, None] = None
+        self.sequence_indent: Union[int, None] = None
+        self.sequence_dash_offset: int = 0
         self.compact_seq_seq = None
         self.compact_seq_map = None
         self.sort_base_mapping_type_on_output = None  # default: sort
@@ -160,8 +161,8 @@ class YAML:
         self.preserve_quotes = None
         self.allow_duplicate_keys = False  # duplicate keys in map, set
         self.encoding = 'utf-8'
-        self.explicit_start = None
-        self.explicit_end = None
+        self.explicit_start: Union[bool, None] = None
+        self.explicit_end: Union[bool, None] = None
         self.tags = None
         self.default_style = None
         self.top_level_block_style_scalar_no_indent_error_1_1 = False
@@ -775,7 +776,12 @@ class YAML:
         self._context_manager = YAMLContextManager(self)
         return self
 
-    def __exit__(self, typ: Any, value: Any, traceback: Any) -> None:
+    def __exit__(
+        self,
+        typ: Optional[Type[BaseException]],
+        value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         if typ:
             nprint('typ', typ)
         self._context_manager.teardown_output()
