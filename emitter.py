@@ -874,7 +874,11 @@ class Emitter:
         elif self.style == "'":
             self.write_single_quoted(self.analysis.scalar, split)
         elif self.style == '>':
-            self.write_folded(self.analysis.scalar)
+            try:
+                cmx = self.event.comment[1][0]
+            except (IndexError, TypeError):
+                cmx = ""
+            self.write_folded(self.analysis.scalar, cmx)
             if (
                 self.event.comment
                 and self.event.comment[0]
@@ -1440,9 +1444,11 @@ class Emitter:
         hints += indicator
         return hints, indent, indicator
 
-    def write_folded(self, text: Any) -> None:
+    def write_folded(self, text: Any, comment: Any) -> None:
         hints, _indent, _indicator = self.determine_block_hints(text)
-        self.write_indicator('>' + hints, True)
+        if not isinstance(comment, str):
+            comment = ''
+        self.write_indicator('>' + hints + comment, True)
         if _indicator == '+':
             self.open_ended = True
         self.write_line_break()
