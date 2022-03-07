@@ -55,8 +55,8 @@ class DuplicateKeyError(MarkedYAMLError):
 
 class BaseConstructor:
 
-    yaml_constructors: Dict[Any, Any] = {}
-    yaml_multi_constructors: Dict[Any, Any] = {}
+    yaml_cls_constructors: Dict[Any, Any] = {}
+    yaml_cls_multi_constructors: Dict[Any, Any] = {}
 
     def __init__(self, preserve_quotes: Optional[bool] = None, loader: Any = None) -> None:
         self.loader = loader
@@ -71,6 +71,11 @@ class BaseConstructor:
         self.deep_construct = False
         self._preserve_quotes = preserve_quotes
         self.allow_duplicate_keys = version_tnf((0, 15, 1), (0, 16))
+        # partially solve the global state of constructors
+        self.yaml_constructors = self.__class__.yaml_cls_constructors.copy()
+        self.yaml_multi_constructors = self.__class__.yaml_cls_multi_constructors.copy()
+        self.add_constructor = self.__add_instance_constructor  # type: ignore
+        self.add_multi_constructor = self.__add_multi_instance_constructor  # type: ignore
 
     @property
     def composer(self) -> Any:
@@ -312,15 +317,23 @@ class BaseConstructor:
 
     @classmethod
     def add_constructor(cls, tag: Any, constructor: Any) -> None:
-        if 'yaml_constructors' not in cls.__dict__:
-            cls.yaml_constructors = cls.yaml_constructors.copy()
-        cls.yaml_constructors[tag] = constructor
+        if 'yaml_cls_constructors' not in cls.__dict__:
+            cls.yaml_cls_constructors = cls.yaml_cls_constructors.copy()
+        cls.yaml_cls_constructors[tag] = constructor
 
     @classmethod
     def add_multi_constructor(cls, tag_prefix: Any, multi_constructor: Any) -> None:
-        if 'yaml_multi_constructors' not in cls.__dict__:
-            cls.yaml_multi_constructors = cls.yaml_multi_constructors.copy()
-        cls.yaml_multi_constructors[tag_prefix] = multi_constructor
+        if 'yaml_cls_multi_constructors' not in cls.__dict__:
+            cls.yaml_cls_multi_constructors = cls.yaml_cls_multi_constructors.copy()
+        cls.yaml_cls_multi_constructors[tag_prefix] = multi_constructor
+
+    def __add_instance_constructor(self, tag: Any, constructor: Any) -> None:
+        self.yaml_constructors[tag] = constructor
+
+    def __add_multi_instance_constructor(
+        self, tag_prefix: Any, multi_constructor: Any
+    ) -> None:
+        self.yaml_multi_constructors[tag_prefix] = multi_constructor
 
 
 class SafeConstructor(BaseConstructor):

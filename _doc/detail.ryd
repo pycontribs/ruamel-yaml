@@ -1,5 +1,5 @@
-version: 0.1
-output: rst
+version: 0.2
+text: rst
 fix_inline_single_backquotes: true
 --- |
 *******
@@ -179,7 +179,7 @@ adding/replacing comments
 
 Starting with version 0.8, you can add/replace comments on block style
 collections (mappings/sequences resuting in Python dict/list). The basic
-for for this is::
+for for this is:
 --- !python |
   from __future__ import print_function
 

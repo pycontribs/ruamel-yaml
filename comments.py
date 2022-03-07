@@ -114,9 +114,7 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join(
-            [f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()]
-        )
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
         if it:
             it = '\n    ' + it + '  '
         return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'
@@ -132,9 +130,7 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join(
-            [f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()]
-        )
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
         if it:
             it = '\n    ' + it + '  '
         return f'Comment(\n  pre={self.pre},\n  items={{{it}}}{end})'
@@ -1111,6 +1107,12 @@ class TaggedScalar(CommentedBase):
 
     def __str__(self) -> Any:
         return self.value
+
+    def count(self, s: str, start: Optional[int] = None, end: Optional[int] = None) -> Any:
+        return self.value.count(s, start, end)
+
+    def __getitem__(self, pos: int) -> Any:
+        return self.value[pos]
 
 
 def dump_comments(d: Any, name: str = "", sep: str = '.', out: Any = sys.stdout) -> None:

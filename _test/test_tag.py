@@ -118,9 +118,20 @@ class TestIssue201:
 
 class TestImplicitTaggedNodes:
     def test_scalar(self):
-        round_trip("""\
-        - !Scalar abcdefg
+        data = round_trip("""\
+        - !SString abcdefg
+        - !SFloat 1.0
+        - !SInt 1961
+        - !SBool true
+        - !SLit |
+          glitter in the dark near the Tanhäuser gate
         """)
+        # tagged scalers have string or string types as value 
+        assert data[0].count('d') == 1
+        assert data[1].count('1') == 1
+        assert data[2].count('1') == 2
+        assert data[3].count('u') == 1
+        assert data[4].count('a') == 4
 
     def test_mapping(self):
         round_trip("""\

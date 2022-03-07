@@ -4,6 +4,8 @@
 testing of YAML.register_class and @yaml_object
 """
 
+from ruamel.yaml.comments import TaggedScalar, CommentedMap
+
 from roundtrip import YAML
 
 
@@ -39,6 +41,7 @@ class TestRegisterClass(object):
           age: 18
         """
         d = yaml.load(ys)
+        assert isinstance(d[0], User0)  # and is not a TaggedScalar
         yaml.dump(d, compare=ys, unordered_lines=True)
 
     def test_register_0_safe(self):
@@ -87,6 +90,19 @@ class TestRegisterClass(object):
         """
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
+
+    def test_check_register_on_instance(self):
+        yaml = YAML()
+        ys = """
+        - !User0
+          name: Anthon
+          age: 18
+        - !User1 my name is Giovanni Giorgio
+        """
+        d = yaml.load(ys)
+        assert isinstance(d[0], CommentedMap)
+        assert isinstance(d[1], TaggedScalar)
+        yaml.dump(d, compare=ys, unordered_lines=True)
 
 
 class TestDecorator(object):

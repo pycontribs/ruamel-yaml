@@ -66,6 +66,9 @@ ChangeLog
 =========
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
+NEXT:
+  - internals of registering tags have changed, `YAML().register_class()` no 
+    longer "reappear" in other YAML instances.
 
 0.17.21 (2022-02-12):
   - fix bug in calling `.compose()` method with `pathlib.Path` instance.

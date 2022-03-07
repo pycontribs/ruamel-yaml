@@ -502,6 +502,12 @@ class YAML:
                         CParser.__init__(selfx, stream)
                         selfx._parser = selfx._composer = selfx
                         self.Constructor.__init__(selfx, loader=selfx)
+                        selfx.yaml_constructors = (
+                            self.constructor.yaml_constructors.copy()
+                        )
+                        selfx.yaml_multi_constructors = (
+                            self.constructor.yaml_multi_constructors.copy()
+                        )
                         selfx.allow_duplicate_keys = self.allow_duplicate_keys
                         rslvr.__init__(selfx, version=version, loadumper=selfx)
 
@@ -744,7 +750,7 @@ class YAML:
 
     def register_class(self, cls: Any) -> Any:
         """
-        register a class for dumping loading
+        register a class for dumping/loading
         - if it has attribute yaml_tag use that to register, else use class name
         - if it has methods to_yaml/from_yaml use those to dump/load else dump attributes
           as mapping
