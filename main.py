@@ -157,8 +157,8 @@ class YAML:
 
         self.top_level_colon_align = None
         self.prefix_colon = None
-        self.version = None
-        self.preserve_quotes = None
+        self.version: Optional[Any] = None
+        self.preserve_quotes: Optional[bool] = None
         self.allow_duplicate_keys = False  # duplicate keys in map, set
         self.encoding = 'utf-8'
         self.explicit_start: Union[bool, None] = None
@@ -167,7 +167,7 @@ class YAML:
         self.default_style = None
         self.top_level_block_style_scalar_no_indent_error_1_1 = False
         # directives end indicator with single scalar document
-        self.scalar_after_indicator = None
+        self.scalar_after_indicator: Optional[bool] = None
         # [a, b: 1, c: {d: 2}]  vs. [a, {b: 1}, {c: {d: 2}}]
         self.brace_single_entry_mapping_in_flow_sequence = False
         for module in self.plug_ins:

@@ -18,7 +18,6 @@ from ruamel.yaml.comments import (
     CommentedKeySeq,
     CommentedKeyMap,
     CommentedSet,
-    comment_attrib,
     merge_attrib,
     TaggedScalar,
 )
@@ -711,7 +710,7 @@ class RoundTripRepresenter(SafeRepresenter):
             self.represented_objects[self.alias_key] = node
         best_style = True
         try:
-            comment = getattr(sequence, comment_attrib)
+            comment = sequence.ca
             node.comment = comment.comment
             # reset any comment already printed information
             if node.comment and node.comment[1]:
@@ -787,7 +786,7 @@ class RoundTripRepresenter(SafeRepresenter):
         best_style = True
         # no sorting! !!
         try:
-            comment = getattr(mapping, comment_attrib)
+            comment = mapping.ca
             if node.comment is None:
                 node.comment = comment.comment
             else:
@@ -873,7 +872,7 @@ class RoundTripRepresenter(SafeRepresenter):
             self.represented_objects[self.alias_key] = node
         best_style = True
         try:
-            comment = getattr(omap, comment_attrib)
+            comment = omap.ca
             if node.comment is None:
                 node.comment = comment.comment
             else:
@@ -937,7 +936,7 @@ class RoundTripRepresenter(SafeRepresenter):
         best_style = True
         # no sorting! !!
         try:
-            comment = getattr(setting, comment_attrib)
+            comment = setting.ca
             if node.comment is None:
                 node.comment = comment.comment
             else:

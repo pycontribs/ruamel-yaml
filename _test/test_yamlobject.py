@@ -1,12 +1,13 @@
 # coding: utf-8
 
 import sys
-import pytest  # NOQA
+from typing import Any
+import pytest  # type: ignore # NOQA
 
 from roundtrip import save_and_run  # NOQA
 
 
-def test_monster(tmpdir):
+def test_monster(tmpdir: Any) -> None:
     program_src = '''\
     import ruamel.yaml
     from textwrap import dedent
@@ -49,8 +50,8 @@ def test_monster(tmpdir):
     assert save_and_run(program_src, tmpdir) == 0
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
-def test_qualified_name00(tmpdir):
+@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')  # type: ignore
+def test_qualified_name00(tmpdir: Any) -> None:
     """issue 214"""
     program_src = """\
     from ruamel.yaml import YAML
@@ -73,8 +74,8 @@ def test_qualified_name00(tmpdir):
     assert save_and_run(program_src, tmpdir) == 0
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
-def test_qualified_name01(tmpdir):
+@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')  # type: ignore
+def test_qualified_name01(tmpdir: Any) -> None:
     """issue 214"""
     from ruamel.yaml import YAML
     import ruamel.yaml.comments

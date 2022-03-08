@@ -33,7 +33,7 @@ _package_data: Dict[str, Any] = dict(
     read_the_docs='yaml',
     supported=[(3, 6)],  # minimum
     tox=dict(
-        env='*',  # f for 3.5
+        env='*g',  # f for 3.5
         fl8excl='_test/lib',
     ),
     # universal=True,

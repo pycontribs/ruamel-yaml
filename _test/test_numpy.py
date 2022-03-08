@@ -1,12 +1,12 @@
 # coding: utf-8
 
 try:
-    import numpy
+    import numpy  # type: ignore
 except:  # NOQA
     numpy = None
 
 
-def Xtest_numpy():
+def Xtest_numpy() -> None:
     import ruamel.yaml
 
     if numpy is None:
@@ -14,7 +14,7 @@ def Xtest_numpy():
     data = numpy.arange(10)
     print('data', type(data), data)
 
-    yaml_str = ruamel.yaml.dump(data)
+    yaml_str = ruamel.yaml.dump(data)  # type: ignore  # needs updating to use buffer
     datb = ruamel.yaml.load(yaml_str)
     print('datb', type(datb), datb)
 
