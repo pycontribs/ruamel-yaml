@@ -1855,7 +1855,7 @@ class RoundTripScanner(Scanner):
                         break
                     comment += ch
                     srf()
-                # gather any blank lines following the comment too
+                # gather any blank lines following the comment to
                 ch = self.scan_line_break()
                 while len(ch) > 0:
                     comment += ch

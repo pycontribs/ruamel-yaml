@@ -1340,6 +1340,7 @@ class RoundTripConstructor(SafeConstructor):
                         key_s.fa.set_flow_style()
                     elif key_node.flow_style is False:
                         key_s.fa.set_block_style()
+                    key_s._yaml_set_line_col(key.lc.line, key.lc.col)
                     key = key_s
                 elif isinstance(key, MutableMapping):
                     key_m = CommentedKeyMap(key)
@@ -1347,6 +1348,7 @@ class RoundTripConstructor(SafeConstructor):
                         key_m.fa.set_flow_style()
                     elif key_node.flow_style is False:
                         key_m.fa.set_block_style()
+                    key_m._yaml_set_line_col(key.lc.line, key.lc.col)
                     key = key_m
             if not isinstance(key, Hashable):
                 raise ConstructorError(
