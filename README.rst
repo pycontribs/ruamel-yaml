@@ -77,6 +77,8 @@ NEXT:
     Issue reported by Jacob Floyd.
   - line numbers are now set on `CommentedKeySeq` and `CommentedKeyMap` (which
     are created if you have a sequence resp. mapping as the key in a mapping)
+  - fix loading of `!!float 42` (reported by Eric on
+    `Stack overflow <https://stackoverflow.com/a/71555107/1307905>`_)
 
 0.17.21 (2022-02-12):
   - fix bug in calling `.compose()` method with `pathlib.Path` instance.

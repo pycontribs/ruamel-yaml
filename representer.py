@@ -639,10 +639,13 @@ class RoundTripRepresenter(SafeRepresenter):
             # no exponent, "normal" dot
             prec = data._prec
             ms = data._m_sign if data._m_sign else ""
-            # -1 for the dot
-            value = f'{ms}{abs(data):0{data._width - len(ms)}.{data._width - prec - 1}f}'
-            if prec == 0 or (prec == 1 and ms != ""):
-                value = value.replace('0.', '.')
+            if prec < 0:
+                value = f'{ms}{abs(int(data)):0{data._width - len(ms)}d}'
+            else:
+                # -1 for the dot
+                value = f'{ms}{abs(data):0{data._width - len(ms)}.{data._width - prec - 1}f}'
+                if prec == 0 or (prec == 1 and ms != ""):
+                    value = value.replace('0.', '.')
             while len(value) < data._width:
                 value += '0'
         else:
