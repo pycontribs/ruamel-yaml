@@ -69,7 +69,8 @@ ChangeLog
 
 NEXT:
   - internals of registering tags have changed, `YAML().register_class()` no 
-    longer "reappear" in other YAML instances.
+    longer "reappear" in other YAML instances, because registering is no longer
+    done on the Constructor/Representer classes but on their instances.
   - merge MR 4, handling OctalInt in YAML 1.1 
     (provided by `Jacob Floyd <https://sourceforge.net/u/cognifloyd/profile/>`_)
   - fix for folded scalar part of 421: comments after ">" on first line of folded

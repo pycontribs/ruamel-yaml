@@ -92,14 +92,43 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
 
-    def test_check_register_on_instance(self) -> None:
+    def test_check_register_0_on_instance(self) -> None:
         yaml = YAML()
         ys = """
         - !User0
           name: Anthon
           age: 18
-        - !User1 my name is Giovanni Giorgio
+        - !user my name is Giovanni Giorgio
         """
+        d = yaml.load(ys)
+        assert isinstance(d[0], CommentedMap)
+        assert isinstance(d[1], TaggedScalar)
+        yaml.dump(d, compare=ys, unordered_lines=True)
+
+    def test_check_register_1_on_instance(self) -> None:
+        yaml = YAML()
+        yaml.register_class(User1)
+        ys = """
+        - !User0
+          name: Anthon
+          age: 18
+        - !user anthon-18
+        """
+        d = yaml.load(ys)
+        assert isinstance(d[0], CommentedMap)
+        assert not isinstance(d[1], TaggedScalar)
+        yaml.dump(d, compare=ys, unordered_lines=True)
+
+    def test_check_register_2_on_instance(self) -> None:
+        yaml = YAML()
+        yaml.register_class(User1)
+        ys = """
+        - !User0
+          name: Anthon
+          age: 18
+        - !user anthon-18
+        """
+        yaml = YAML()
         d = yaml.load(ys)
         assert isinstance(d[0], CommentedMap)
         assert isinstance(d[1], TaggedScalar)

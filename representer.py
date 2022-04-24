@@ -48,8 +48,8 @@ class RepresenterError(YAMLError):
 
 class BaseRepresenter:
 
-    yaml_representers: Dict[Any, Any] = {}
-    yaml_multi_representers: Dict[Any, Any] = {}
+    yaml_cls_representers: Dict[Any, Any] = {}
+    yaml_cls_multi_representers: Dict[Any, Any] = {}
 
     def __init__(
         self: Any,
@@ -66,6 +66,11 @@ class BaseRepresenter:
         self.object_keeper: List[Any] = []
         self.alias_key: Optional[int] = None
         self.sort_base_mapping_type_on_output = True
+        # partially solve the global state of representers
+        self.yaml_representers = self.__class__.yaml_cls_representers.copy()
+        self.yaml_multi_representers = self.__class__.yaml_cls_multi_representers.copy()
+        self.add_representer = self.__add_instance_representer  # type: ignore
+        self.add_multi_representer = self.__add_multi_instance_representer  # type: ignore
 
     @property
     def serializer(self) -> Any:
@@ -127,15 +132,23 @@ class BaseRepresenter:
 
     @classmethod
     def add_representer(cls, data_type: Any, representer: Any) -> None:
-        if 'yaml_representers' not in cls.__dict__:
-            cls.yaml_representers = cls.yaml_representers.copy()
-        cls.yaml_representers[data_type] = representer
+        if 'yaml_cls_representers' not in cls.__dict__:
+            cls.yaml_cls_representers = cls.yaml_cls_representers.copy()
+        cls.yaml_cls_representers[data_type] = representer
 
     @classmethod
     def add_multi_representer(cls, data_type: Any, representer: Any) -> None:
         if 'yaml_multi_representers' not in cls.__dict__:
-            cls.yaml_multi_representers = cls.yaml_multi_representers.copy()
-        cls.yaml_multi_representers[data_type] = representer
+            cls.yaml_cls_multi_representers = cls.yaml_cls_multi_representers.copy()
+        cls.yaml_cls_multi_representers[data_type] = representer
+
+    def __add_instance_representer(self, tag: Any, representer: Any) -> None:
+        self.yaml_representers[tag] = representer
+
+    def __add_multi_instance_representer(
+        self, tag_prefix: Any, multi_representer: Any
+    ) -> None:
+        self.yaml_multi_representers[tag_prefix] = multi_representer
 
     def represent_scalar(
         self, tag: Any, value: Any, style: Any = None, anchor: Any = None
