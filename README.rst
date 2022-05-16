@@ -80,6 +80,9 @@ NEXT:
     are created if you have a sequence resp. mapping as the key in a mapping)
   - fix loading of `!!float 42` (reported by Eric on
     `Stack overflow <https://stackoverflow.com/a/71555107/1307905>`_)
+  - plain scalars: put single words longer than width on a line of their own, instead
+    of after the previous line (issue 427, reported by `Antoine Cotten 
+    <https://sourceforge.net/u/antoineco/profile/>`_)
 
 0.17.21 (2022-02-12):
   - fix bug in calling `.compose()` method with `pathlib.Path` instance.

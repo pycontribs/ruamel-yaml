@@ -1618,6 +1618,9 @@ class Emitter:
             else:
                 if ch is None or ch in ' \n\x85\u2028\u2029':
                     data = text[start:end]
+                    if len(data) > self.best_width and self.column > self.indent:
+                        # words longer than line length get a line of their own
+                        self.write_indent()
                     self.column += len(data)
                     if self.encoding:
                         data = data.encode(self.encoding)  # type: ignore

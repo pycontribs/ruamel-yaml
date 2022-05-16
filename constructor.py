@@ -1162,7 +1162,8 @@ class RoundTripConstructor(SafeConstructor):
                 anchor=node.anchor,
             )
         width = len(value_so)
-        prec = value_so.find('.')  # you can't use index, !!float 42 would be a float without a dot
+        # you can't use index, !!float 42 would be a float without a dot
+        prec = value_so.find('.')
         lead0 = leading_zeros(value_so)
         return ScalarFloat(
             sign * float(value_s),
