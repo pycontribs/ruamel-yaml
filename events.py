@@ -55,6 +55,9 @@ class Event:
                 arguments += f', comment={self.comment!r}'
         return f'{self.__class__.__name__!s}({arguments!s})'
 
+    def compact_repr(self) -> Any:
+        return f'{self.crepr}'
+
 
 class NodeEvent(Event):
     __slots__ = ('anchor',)
@@ -96,6 +99,7 @@ class CollectionEndEvent(Event):
 
 class StreamStartEvent(Event):
     __slots__ = ('encoding',)
+    crepr = '+STR'
 
     def __init__(
         self,
@@ -110,10 +114,12 @@ class StreamStartEvent(Event):
 
 class StreamEndEvent(Event):
     __slots__ = ()
+    crepr = '-STR'
 
 
 class DocumentStartEvent(Event):
     __slots__ = 'explicit', 'version', 'tags'
+    crepr = '+DOC'
 
     def __init__(
         self,
@@ -132,6 +138,7 @@ class DocumentStartEvent(Event):
 
 class DocumentEndEvent(Event):
     __slots__ = ('explicit',)
+    crepr = '-DOC'
 
     def __init__(
         self,
@@ -161,6 +168,7 @@ class AliasEvent(NodeEvent):
 
 class ScalarEvent(NodeEvent):
     __slots__ = 'tag', 'implicit', 'value', 'style'
+    crepr = '=VAL'
 
     def __init__(
         self,
@@ -178,6 +186,9 @@ class ScalarEvent(NodeEvent):
         self.implicit = implicit
         self.value = value
         self.style = style
+
+    def compact_repr(self) -> Any:
+        return f'{self.crepr} :{self.value}'
 
 
 class SequenceStartEvent(CollectionStartEvent):

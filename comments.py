@@ -194,7 +194,7 @@ class Comment:
 
 
 # to distinguish key from None
-class NotNone: pass
+class NotNone: pass  # NOQA
 
 
 class Format:
