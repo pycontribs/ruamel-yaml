@@ -13,6 +13,7 @@ def CommentCheck() -> None:
 
 class Event:
     __slots__ = 'start_mark', 'end_mark', 'comment'
+    crepr = 'Unspecified Event'
 
     def __init__(
         self, start_mark: Any = None, end_mark: Any = None, comment: Any = CommentCheck

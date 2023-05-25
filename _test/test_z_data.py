@@ -100,7 +100,7 @@ def pytest_generate_tests(metafunc: Any) -> None:
 
 
 class TestYAMLData:
-    def yaml(self, yaml_version: Optional[Any] = None, typ='rt') -> Any:
+    def yaml(self, yaml_version: Optional[Any] = None, typ: Any = 'rt') -> Any:
         from ruamel.yaml import YAML
 
         y = YAML(typ=typ)
@@ -144,12 +144,20 @@ class TestYAMLData:
 
         buf = StringIO()
         yaml = self.yaml(yaml_version=yaml_version)
+        indent = 0
         try:
             for event in yaml.parse(input.value):
-                print(event.compact_repr(), file=buf)
+                compact = event.compact_repr()
+                assert compact[0] in '+=-'
+                if compact[0] == '-':
+                    indent -= 1
+                print(f'{" "*indent}{compact}', file=buf)
+                if compact[0] == '+':
+                    indent += 1
+
         except Exception as e: # NOQA
             print('=EXCEPTION', file=buf)
-        assert buf.getvalue() == output.value
+        assert buf.getvalue() == output.value  # type: ignore
 
     def load_assert(
         self, input: Any, confirm: Any, yaml_version: Optional[Any] = None
